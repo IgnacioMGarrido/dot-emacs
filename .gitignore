@@ -1,0 +1,9 @@
+*.*~
+config.el
+elpa/
+history
+auto-save-list
+network-security.data
+places
+recentf
+server/
