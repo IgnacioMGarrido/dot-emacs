@@ -55,7 +55,10 @@
 #+end_src
 * Smartparens
 #+begin_src emacs-lisp
-  (require 'smartparens-config)
+	  (use-package  smartparens
+	    :ensure t
+	    :config
+	    (use-package smartparens-config))
 #+end_src
 * Rainbow Delimiters
 #+begin_src emacs-lisp
@@ -74,10 +77,13 @@
 * Yasnippet
 - Used for using snippets for for loops, main declarations etc
 #+begin_src emacs-lisp
-  (add-to-list 'load-path
-		"~/.emacs.d/plugins/yasnippet")
-  (require 'yasnippet)
-  (yas-global-mode 1)
+    (use-package yasnippet
+      :ensure t
+      :config
+      (setq yas-snippet-dir '(~/.emacs.d/plugins/yasnippet))
+      (yas-global-mode 1))
+
+
 #+end_src
 * Programming Languages
 ** Configuring modes for extensions 

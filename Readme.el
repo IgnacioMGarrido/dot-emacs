@@ -5,7 +5,7 @@
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p)
-
+(setq backup-directory-alist '((".*" . "~/.emacs/.backup")))
 ;;Refresh Buffer
 (global-set-key (kbd "<f5>") 'revert-buffer)
 
@@ -44,7 +44,10 @@
 	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 	))
 
-(require 'smartparens-config)
+(use-package  smartparens
+  :ensure t
+  :config
+  (use-package smartparens-config))
 
 (use-package rainbow-delimiters
   :ensure t)
@@ -55,10 +58,11 @@
 (ido-mode 1)
 (defalias 'list-buffers 'ibuffer)
 
-(add-to-list 'load-path
-	      "~/.emacs.d/plugins/yasnippet")
-(require 'yasnippet)
-(yas-global-mode 1)
+(use-package yasnippet
+  :ensure t
+  :config
+  (setq yas-snippet-dir '(~/.emacs.d/plugins/yasnippet))
+  (yas-global-mode 1))
 
 ;;Add extensions
 (setq auto-mode-alist
