@@ -44,16 +44,115 @@
 	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 	))
 
+(require 'smartparens-config)
+
+(use-package rainbow-delimiters
+  :ensure t)
+
 ;; better matching for finding buffers
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode 1)
 (defalias 'list-buffers 'ibuffer)
 
-(use-package yasnippet
-  :ensure t
-  :init
-  (yas-global-mode 1))
+(add-to-list 'load-path
+	      "~/.emacs.d/plugins/yasnippet")
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;;Add extensions
+(setq auto-mode-alist
+      (append
+       '(("\\.cpp$"   . c++-mode)
+	("\\.hpp$"    . c++-mode)
+	("\\.c$"      . c++-mode)
+	("\\.h$"      . c++-mode)
+	("\\.inl$"    . c++-mode)
+	("\\.hpp$"    . c++-mode)
+	("\\.txt$"    . indented-text-mode)
+	("\\.lua$"    . lua-mode))
+       auto-mode-alist))
+
+(require 'cc-mode)
+
+     (defconst ry-c-style
+     '((c-electric-pound-behavior . nil)
+       (c-tab-always-indent       . t)
+       (c-hanging-braces-alist    . ((class-open)
+				     (class-close)
+				     (defun-open)
+				     (defun-close)
+				     (inline-open)
+				     (inline-close)
+				     (brace-list-open)
+				     (brace-list-close)
+				     (brace-list-intro)
+				     (brace-list-entry)
+				     (block-open)
+				     (block-close)
+				     (substatement-open)
+				     (state-case-open)
+				     (class-open)))
+       (c-hanging-colons-alist    . ((inher-intro)
+				     (case-label)
+				     (label)
+				     (access-label)
+				     (access-key)
+				     (member-init-intro)))
+       (c-cleanup-list            . (scope-operator
+				     list-close-comma
+				     defun-close-semi))
+       (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
+				     (label                 . -4)
+				     (access-label          . -4)
+				     (substatement-open     . 0)
+				     (statement-case-intro  . 0)
+				     (statement-case-open   . 4)
+				     (statement-block-intro . c-lineup-for)
+				     (block-open            . c-lineup-assignments)
+				     (statement-cont        . (c-lineup-assignments 4))
+				     (inexpr-class          . c-lineup-arglist-intro-after-paren)
+				     (case-label            . 4)
+				     (block-open            . 0)
+				     (inline-open           . 0)
+				     (innamespace           . 0)
+				     (topmost-intro-cont    . 0) ; recently changed
+				     (knr-argdecl-intro     . -4)
+				     (brace-entry-open      . c-lineup-assignments)
+				     (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
+				     (brace-list-open       . (c-lineup-assignments 0))
+				     (brace-list-open	 . 0)
+				     (brace-list-intro      . 4)
+				     (brace-list-entry      . 0)
+				     (brace-list-close      . 0)))
+       (c-echo-syntactic-information-p . t))
+     "ry-c-style")
+
+(defun ry-c-style-hook-notabs ()
+  (c-add-style "ryc" ry-c-style t)
+  (setq tab-width 4)
+  (c-set-offset 'innamespace 0)
+  (c-toggle-auto-hungry-state 1)
+  (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
+  (setq electric-pair-inhibit-predicate
+	(lambda (c)
+	  (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
+  (sp-pair "'" nil :actions :rem)
+  (setq sp-highlight-pair-overlay nil)
+  (defadvice align-regexp (around align-regexp-with-spaces activate)
+    (let ((indent-tabs-mode nil))
+      ad-do-it)))
+
+(defun psj-c-style-gl ()
+(setq indent-tabs-mode 'only)
+(defadvice align-regexp (around align-regexp-with-spaces activate)
+  (let ((indent-tabs-mode nil))
+    ad-do-it)))
+
+(add-hook 'c-mode-common-hook 'ry-c-style-hook-notabs)
+(add-hook 'c-mode-common-hook 'psj-c-style-gl)
+(add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
+(add-hook 'c-mode-common-hook #'smartparens-config)
 
 (require 'org-tempo)
 (use-package org
@@ -103,127 +202,6 @@
   :hook (org-mode . org-superstar-mode)
   :config (org-superstar-configure-like-org-bullets))
 
-;;Add extensions
-(setq auto-mode-alist
-      (append
-       '(("\\.cpp$"   . c++-mode)
-	("\\.hpp$"    . c++-mode)
-	("\\.c$"      . c++-mode)
-	("\\.h$"      . c++-mode)
-	("\\.inl$"    . c++-mode)
-	("\\.hpp$"    . c++-mode)
-	("\\.txt$"    . indented-text-mode)
-	("\\.lua$"    . lua-mode))
-       auto-mode-alist))
-
-(require 'cc-mode)
-
-  (defconst ry-c-style
-  '((c-electric-pound-behavior . nil)
-    (c-tab-always-indent       . t)
-    (c-hanging-braces-alist    . ((class-open)
-				  (class-close)
-				  (defun-open)
-				  (defun-close)
-				  (inline-open)
-				  (inline-close)
-				  (brace-list-open)
-				  (brace-list-close)
-				  (brace-list-intro)
-				  (brace-list-entry)
-				  (block-open)
-				  (block-close)
-				  (substatement-open)
-				  (state-case-open)
-				  (class-open)))
-    (c-hanging-colons-alist    . ((inher-intro)
-				  (case-label)
-				  (label)
-				  (access-label)
-				  (access-key)
-				  (member-init-intro)))
-    (c-cleanup-list            . (scope-operator
-				  list-close-comma
-				  defun-close-semi))
-    (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
-				  (label                 . -4)
-				  (access-label          . -4)
-				  (substatement-open     . 0)
-				  (statement-case-intro  . 0)
-				  (statement-case-open   . 4)
-				  (statement-block-intro . c-lineup-for)
-				  (block-open            . c-lineup-assignments)
-				  (statement-cont        . (c-lineup-assignments 4))
-				  (inexpr-class          . c-lineup-arglist-intro-after-paren)
-				  (case-label            . 4)
-				  (block-open            . 0)
-				  (inline-open           . 0)
-				  (innamespace           . 0)
-				  (topmost-intro-cont    . 0) ; recently changed
-				  (knr-argdecl-intro     . -4)
-				  (brace-entry-open      . c-lineup-assignments)
-				  ;; (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
-				  (brace-list-open       . (c-lineup-assignments 0))
-				  (brace-list-open	 . 0)
-				  (brace-list-intro      . 4)
-				  (brace-list-entry      . 0)
-				  (brace-list-close      . 0)))
-    (c-echo-syntactic-information-p . t))
-  "ry-c-style")
-
-(defun ry-c-style-hook-notabs ()
-	      (c-add-style "ryc" ry-c-style t)
-	      (setq tab-width 4)
-	      (c-set-offset 'innamespace 0)
-	      (c-toggle-auto-hungry-state 1)
-	      (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
-	      (setq electric-pair-inhibit-predicate
-		    (lambda (c)
-		      (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
-	      (sp-pair "'" nil :actions :rem)
-	      (setq sp-highlight-pair-overlay nil)
-	      (defadvice align-regexp (around align-regexp-with-spaces activate)
-		(let ((indent-tabs-mode nil))
-		  ad-do-it)))
-	    ;;;
-
-	  ;;; method calls
-	  (font-lock-add-keywords 'c++-mode
-	    `((,(concat
-		 "\\<[_a-zA-Z][_a-zA-Z0-9]*\\>"       ; Object identifier
-		 "\\s *"                              ; Optional white space
-		 "\\(?:\\.\\|->\\)"                   ; Member access
-		 "\\s *"                              ; Optional white space
-		 "\\<\\([_a-zA-Z][_a-zA-Z0-9]*\\)\\>" ; Member identifier
-		 "\\s *"                              ; Optional white space
-		 "(")                                 ; Paren for method invocation
-	       1 'font-lock-function-name-face t)))
-
-	  ;;; operators, function calls, etc.
-	(dolist (mode-iter '(c-mode c++-mode glsl-mode java-mode javascript-mode rust-mode))
-	  (font-lock-add-keywords
-	   mode-iter
-	   '(("\\([~^&\|!<>=\\+*/%-]\\)" 0 'font-lock-operator-face keep)))
-	  (font-lock-add-keywords
-	   mode-iter
-	   '(("\\([\]\[}{)(:;]\\)" 0 'font-lock-delimit-face keep)))
-	  ;; functions
-	  (font-lock-add-keywords
-	   mode-iter
-	   '(("\\([_a-zA-Z][_a-zA-Z0-9]*\\)\s*(" 1 'font-lock-function-name-face keep))))
-
-    (defun psj-c-style-gl ()
-      (setq indent-tabs-mode 'only)
-      (defadvice align-regexp (around align-regexp-with-spaces activate)
-	(let ((indent-tabs-mode nil))
-	  ad-do-it)))
-
-    (add-hook 'c-mode-common-hook 'ry-c-style-hook-notabs)
-    (add-hook 'c-mode-common-hook 'psj-c-style-gl)
-    (add-hook 'c-mode-common-hook #'smartparens-mode)
-    (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-    (add-hook 'c-mode-common-hook #'dumb-jump-mode)
-
 ;;window management
 (global-set-key (kbd "M-<right>") 'windmove-right)
 (global-set-key (kbd "M-<left>") 'windmove-left)
@@ -232,6 +210,6 @@
 
 (load-theme 'tango-dark t)
 
-;(set-face-attribute 'default t :font "Ac437 ToshibaSat 8x14-14")
-;(add-to-list 'default-frame-alist '(font . "Ac437 ToshibaSat 8x14-14"))
+(set-face-attribute 'default t :font "Ac437 ToshibaSat 8x14-14")
+(add-to-list 'default-frame-alist '(font . "Ac437 ToshibaSat 8x14-14"))
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
