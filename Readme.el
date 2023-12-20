@@ -6,6 +6,8 @@
 (tool-bar-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq backup-directory-alist '((".*" . "~/.emacs/.backup")))
+(set-charset-priority 'unicode)
+(prefer-coding-system 'utf-8)
 ;;Refresh Buffer
 (global-set-key (kbd "<f5>") 'revert-buffer)
 
