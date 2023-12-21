@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: use-package
+# key: <e
+# --
+(use-package $1
+ :ensure t$0)

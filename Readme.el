@@ -1,3 +1,5 @@
+;; -*- coding: utf-8; lexical-binding: t -*-
+
 (unless (package-installed-p 'use-package)
 	(package-refresh-contents)
 	(package-install 'use-package))
@@ -8,6 +10,9 @@
 (setq backup-directory-alist '((".*" . "~/.emacs/.backup")))
 (set-charset-priority 'unicode)
 (prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-language-environment "UTF-8")
+(set-selection-coding-system 'utf-8)
 ;;Refresh Buffer
 (global-set-key (kbd "<f5>") 'revert-buffer)
 
@@ -54,17 +59,27 @@
 (use-package rainbow-delimiters
   :ensure t)
 
-;; better matching for finding buffers
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-(defalias 'list-buffers 'ibuffer)
-
 (use-package yasnippet
   :ensure t
   :config
   (setq yas-snippet-dir '(~/.emacs.d/plugins/yasnippet))
   (yas-global-mode 1))
+
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode))
+
+(use-package company
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'global-company-mode))
+
+;; better matching for finding buffers
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+(defalias 'list-buffers 'ibuffer)
 
 ;;Add extensions
 (setq auto-mode-alist
@@ -81,84 +96,119 @@
 
 (require 'cc-mode)
 
-     (defconst ry-c-style
-     '((c-electric-pound-behavior . nil)
-       (c-tab-always-indent       . t)
-       (c-hanging-braces-alist    . ((class-open)
-				     (class-close)
-				     (defun-open)
-				     (defun-close)
-				     (inline-open)
-				     (inline-close)
-				     (brace-list-open)
-				     (brace-list-close)
-				     (brace-list-intro)
-				     (brace-list-entry)
-				     (block-open)
-				     (block-close)
-				     (substatement-open)
-				     (state-case-open)
-				     (class-open)))
-       (c-hanging-colons-alist    . ((inher-intro)
-				     (case-label)
-				     (label)
-				     (access-label)
-				     (access-key)
-				     (member-init-intro)))
-       (c-cleanup-list            . (scope-operator
-				     list-close-comma
-				     defun-close-semi))
-       (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
-				     (label                 . -4)
-				     (access-label          . -4)
-				     (substatement-open     . 0)
-				     (statement-case-intro  . 0)
-				     (statement-case-open   . 4)
-				     (statement-block-intro . c-lineup-for)
-				     (block-open            . c-lineup-assignments)
-				     (statement-cont        . (c-lineup-assignments 4))
-				     (inexpr-class          . c-lineup-arglist-intro-after-paren)
-				     (case-label            . 4)
-				     (block-open            . 0)
-				     (inline-open           . 0)
-				     (innamespace           . 0)
-				     (topmost-intro-cont    . 0) ; recently changed
-				     (knr-argdecl-intro     . -4)
-				     (brace-entry-open      . c-lineup-assignments)
-				     (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
-				     (brace-list-open       . (c-lineup-assignments 0))
-				     (brace-list-open	 . 0)
-				     (brace-list-intro      . 4)
-				     (brace-list-entry      . 0)
-				     (brace-list-close      . 0)))
-       (c-echo-syntactic-information-p . t))
-     "ry-c-style")
+ (defconst ry-c-style
+ '((c-electric-pound-behavior . nil)
+  (c-tab-always-indent       . t)
+  (c-hanging-braces-alist    . ((class-open)
+				   (class-close)
+				   (defun-open)
+				   (defun-close)
+				   (inline-open)
+				   (inline-close)
+				   (brace-list-open)
+				   (brace-list-close)
+				   (brace-list-intro)
+				   (brace-list-entry)
+				   (block-open)
+				   (block-close)
+				   (substatement-open)
+				   (state-case-open)
+				   (class-open)))
+   (c-hanging-colons-alist    . ((inher-intro)
+				(case-label)
+				(label)
+				(access-label)
+				(access-key)
+				(member-init-intro)))
+   (c-cleanup-list            . (scope-operator
+				list-close-comma
+				defun-close-semi))
+   (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
+				(label                 . -4)
+				(access-label          . -4)
+				(substatement-open     . 0)
+				(statement-case-intro  . 0)
+				(statement-case-open   . 4)
+				(statement-block-intro . c-lineup-for)
+				(block-open            . c-lineup-assignments)
+				(statement-cont        . (c-lineup-assignments 4))
+				(inexpr-class          . c-lineup-arglist-intro-after-paren)
+				(case-label            . 4)
+				(block-open            . 0)
+				(inline-open           . 0)
+				(innamespace           . 0)
+				(topmost-intro-cont    . 0) ; recently changed
+				(knr-argdecl-intro     . -4)
+				(brace-entry-open      . c-lineup-assignments)
+				(brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
+				(brace-list-open       . (c-lineup-assignments 0))
+				(brace-list-open	 . 0)
+				(brace-list-intro      . 4)
+				(brace-list-entry      . 0)
+				(brace-list-close      . 0)))
+	(c-echo-syntactic-information-p . t))
+	"ry-c-style")
 
 (defun ry-c-style-hook-notabs ()
-  (c-add-style "ryc" ry-c-style t)
-  (setq tab-width 4)
-  (c-set-offset 'innamespace 0)
-  (c-toggle-auto-hungry-state 1)
-  (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
-  (setq electric-pair-inhibit-predicate
-	(lambda (c)
-	  (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
-  (sp-pair "'" nil :actions :rem)
-  (setq sp-highlight-pair-overlay nil)
-  (defadvice align-regexp (around align-regexp-with-spaces activate)
-    (let ((indent-tabs-mode nil))
-      ad-do-it)))
+	(c-add-style "ryc" ry-c-style t)
+	(setq tab-width 4)
+	(c-set-offset 'innamespace 0)
+	(c-toggle-auto-hungry-state 1)
+	(setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
+	(setq electric-pair-inhibit-predicate
+	      (lambda (c)
+		(if (char-equal c ?\') t (electric-pair-default-inhibit c))))
+	(sp-pair "'" nil :actions :rem)
+	(setq sp-highlight-pair-overlay nil)
+	(defadvice align-regexp (around align-regexp-with-spaces activate)
+	  (let ((indent-tabs-mode nil))
+	    ad-do-it)))
 
-(defun psj-c-style-gl ()
-(setq indent-tabs-mode 'only)
-(defadvice align-regexp (around align-regexp-with-spaces activate)
-  (let ((indent-tabs-mode nil))
-    ad-do-it)))
+      (defun psj-c-style-gl ()
+      (setq indent-tabs-mode 'only)
+      (defadvice align-regexp (around align-regexp-with-spaces activate)
+	(let ((indent-tabs-mode nil))
+	  ad-do-it)))
+
+(defun my-move-function-up ()
+    "Move current function up."
+    (interactive)
+    (save-excursion
+      (c-mark-function)
+      (let ((fun-beg (point))
+	    (fun-end (mark)))
+	(transpose-regions (progn
+			     (c-beginning-of-defun 1)
+			     (point))
+			   (progn
+			     (c-end-of-defun 1)
+			     (point))
+			   fun-beg fun-end))))
+
+(defun my-move-function-down ()
+    "Move current function down."
+    (interactive)
+    (save-excursion
+      (c-mark-function)
+      (let ((fun-beg (point))
+	    (fun-end (mark)))
+	(transpose-regions fun-beg fun-end
+			   (progn
+			     (c-beginning-of-defun -1)
+			     (point))
+			   (progn
+			     (c-end-of-defun 1)
+			     (point))))))
 
 (add-hook 'c-mode-common-hook 'ry-c-style-hook-notabs)
 (add-hook 'c-mode-common-hook 'psj-c-style-gl)
+(add-hook 'c-mode-hook 'display-line-numbers-mode)
+(add-hook 'c++-mode-hook 'display-line-numbers-mode)
 (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-(add-hook 'c-mode-common-hook #'smartparens-config)
+;;Disable word wrapping
+(add-hook 'c-mode-common-hook 'toggle-truncate-lines nil)
+;;TODO: This messes up previous tab setup
+;;(add-hook 'c-mode-common-hook #'smartparens-config)
 
 (require 'org-tempo)
 (use-package org
@@ -216,6 +266,5 @@
 
 (load-theme 'tango-dark t)
 
-(set-face-attribute 'default t :font "Ac437 ToshibaSat 8x14-14")
 (add-to-list 'default-frame-alist '(font . "Ac437 ToshibaSat 8x14-14"))
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
