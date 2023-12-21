@@ -1,5 +1,6 @@
 *.*~
 *.last
+.autosaves
 config.el
 elpa/
 history
