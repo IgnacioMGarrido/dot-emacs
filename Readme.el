@@ -71,9 +71,21 @@
   (global-flycheck-mode))
 
 (use-package company
-  :ensure t
-  :init
-  (add-hook 'after-init-hook 'global-company-mode))
+    :ensure t
+    :init
+    (add-hook 'after-init-hook 'global-company-mode))
+
+  (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
+(custom-set-variables
+'(company-c-headers-path-system
+   (quote
+    ( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um")))
+ '(company-clang-arguments
+   (quote
+    ("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
+ '(company-clang-executable
+   "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
+ '(company-clang-insert-arguments nil))
 
 ;; better matching for finding buffers
 (setq ido-enable-flex-matching t)
