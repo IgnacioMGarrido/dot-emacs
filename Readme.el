@@ -7,7 +7,6 @@
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p)
-(setq backup-directory-alist '((".*" . "~/.emacs/.backup")))
 (set-charset-priority 'unicode)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -15,6 +14,16 @@
 (set-selection-coding-system 'utf-8)
 ;;Refresh Buffer
 (global-set-key (kbd "<f5>") 'revert-buffer)
+
+; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
+(custom-set-variables
+  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/.autosaves/\\1" t)))
+  '(backup-directory-alist '((".*" . "~/.emacs.d/.backups/"))))
+
+;; create the autosave dir if necessary, since emacs won't.
+(make-directory "~/.emacs.d/.autosaves/" t)
+
+(require 'cc-mode)
 
 (use-package which-key
       :ensure t
@@ -71,21 +80,51 @@
   (global-flycheck-mode))
 
 (use-package company
-    :ensure t
-    :init
-    (add-hook 'after-init-hook 'global-company-mode))
+     :ensure t
+     :config
+     (setq company-idle-delay 0)
+     (setq company-minimum-prefix-length 2))
 
-  (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
-(custom-set-variables
-'(company-c-headers-path-system
-   (quote
-    ( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um")))
- '(company-clang-arguments
-   (quote
-    ("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
- '(company-clang-executable
-   "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
- '(company-clang-insert-arguments nil))
+ ;;Set variables to find includes for c++ on windows
+(setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin;C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\x64\\bin"))
+ ;;   (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
+   (custom-set-variables
+ ;;   '(company-c-headers-path-system
+ ;;      (quote
+ ;;       ( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um"))
+ ;;     )
+ ;;    '(company-clang-arguments
+ ;;      (quote
+ ;;       ("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
+    '(company-clang-executable
+      "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
+    '(company-clang-insert-arguments nil))
+
+ (use-package company-irony
+   :ensure t
+   :config
+   (require 'company)
+   (add-to-list 'company-backends 'company-irony))
+
+ (use-package irony
+   :ensure t
+   :config
+   (add-hook 'c++-mode-hook 'irony-mode)
+   (add-hook 'c-mode-hook 'irony-mode)
+   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+   (when (boundp 'w32-pipe-read-delay)
+   (setq w32-pipe-read-delay 0))
+   ;; Set the buffer size to 64K on Windows (from the original 4K)
+   (when (boundp 'w32-pipe-buffer-size)
+   (setq irony-server-w32-pipe-buffer-size (* 64 1024))))
+
+
+ ;; Enable only for c++ mode
+ (with-eval-after-load 'company
+   (add-hook 'c++-mode-hook 'company-mode)
+   (add-hook 'c-mode-hook 'company-mode))
+
+;;TODO add additional include (Maybe do it per project?)
 
 ;; better matching for finding buffers
 (setq ido-enable-flex-matching t)
@@ -106,9 +145,7 @@
 	("\\.lua$"    . lua-mode))
        auto-mode-alist))
 
-(require 'cc-mode)
-
- (defconst ry-c-style
+(defconst ry-c-style
  '((c-electric-pound-behavior . nil)
   (c-tab-always-indent       . t)
   (c-hanging-braces-alist    . ((class-open)

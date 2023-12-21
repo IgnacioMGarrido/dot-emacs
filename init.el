@@ -20,8 +20,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(auto-save-file-name-transforms '((".*" "~/.emacs.d/.autosaves/\\1" t)))
+ '(backup-directory-alist '((".*" . "~/.emacs.d/.backups/")))
+ '(company-c-headers-path-system
+   '("C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um"))
+ '(company-clang-arguments
+   '("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v"))
+ '(company-clang-executable
+   "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
+ '(company-clang-insert-arguments nil)
  '(package-selected-packages
-   '(flycheck dash rainbow-delimiters smartparens-config yasnippet which-key toc-org org-superstar org-modern counsel)))
+   '(company-irony flycheck dash rainbow-delimiters smartparens-config yasnippet which-key toc-org org-superstar org-modern counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
