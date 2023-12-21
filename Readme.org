@@ -17,8 +17,21 @@
   (set-selection-coding-system 'utf-8)
   ;;Refresh Buffer
   (global-set-key (kbd "<f5>") 'revert-buffer)
+  (global-hl-line-mode t)
+  #+end_src
+* Misc packages
+** Expand Region
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :ensure t
+    :config
+    (global-set-key (kbd "C-=") 'er/expand-region))
 #+end_src
-
+** IEdit
+#+begin_src emacs-lisp
+   (use-package iedit
+     :ensure t)
+#+end_src
 * Autosaves and backups
 #+begin_src emacs-lisp
   ; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
@@ -96,16 +109,19 @@
 #+begin_src emacs-lisp
       (use-package flycheck
 	:ensure t
-	:init
-	(global-flycheck-mode))
+	:config
+	(add-hook 'after-init-hook #'global-flycheck-mode))
   #+end_src
 * Company Mode (Autocomplete)
 #+begin_src emacs-lisp
     (use-package company
       :ensure t
-      :init
-      (add-hook 'after-init-hook 'global-company-mode))
-
+      :config
+      (setq company-idle-mode 0)
+      (setq company-minimum-prefix 3)
+      (add-hook 'c++-mode-hook 'company-mode)
+      (add-hook 'c-mode-hook 'company-mode) )
+  
   ;;Set variables to find includes for c++ on windows
     (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
   (custom-set-variables
@@ -118,7 +134,6 @@
    '(company-clang-executable
      "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
    '(company-clang-insert-arguments nil))
-
   ;;TODO add additional includes (Maybe do it per project?)
 #+end_src
 
@@ -327,11 +342,29 @@
 #+end_src
 * Themes
 #+begin_src emacs-lisp
- (load-theme 'tango-dark t)
+  ;; (load-theme 'tango-dark t)
+  (use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-miramare t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
 #+end_src
 
 * Fonts
 #+BEGIN_SRC emacs-lisp
-    (add-to-list 'default-frame-alist '(font . "Ac437 ToshibaSat 8x14-14"))
-    (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (set-face-attribute 'default nil :height 100)
 #+END_SRC

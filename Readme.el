@@ -7,7 +7,6 @@
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p)
-(setq backup-directory-alist '((".*" . "~/.emacs/.backup")))
 (set-charset-priority 'unicode)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -15,6 +14,23 @@
 (set-selection-coding-system 'utf-8)
 ;;Refresh Buffer
 (global-set-key (kbd "<f5>") 'revert-buffer)
+(global-hl-line-mode t)
+
+(use-package expand-region
+  :ensure t
+  :config
+  (global-set-key (kbd "C-=") 'er/expand-region))
+
+(use-package iedit
+  :ensure t)
+
+; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
+(custom-set-variables
+  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
+  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/"))))
+
+;; create the autosave dir if necessary, since emacs won't.
+(make-directory "~/.emacs.d/autosaves/" t)
 
 (use-package which-key
       :ensure t
@@ -67,14 +83,18 @@
 
 (use-package flycheck
   :ensure t
-  :init
-  (global-flycheck-mode))
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (use-package company
     :ensure t
-    :init
-    (add-hook 'after-init-hook 'global-company-mode))
+    :config
+    (setq company-idle-mode 0)
+    (setq company-minimum-prefix 3)
+    (add-hook 'c++-mode-hook 'company-mode)
+    (add-hook 'c-mode-hook 'company-mode) )
 
+;;Set variables to find includes for c++ on windows
   (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
 (custom-set-variables
 '(company-c-headers-path-system
@@ -86,6 +106,7 @@
  '(company-clang-executable
    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
  '(company-clang-insert-arguments nil))
+;;TODO add additional includes (Maybe do it per project?)
 
 ;; better matching for finding buffers
 (setq ido-enable-flex-matching t)
@@ -276,7 +297,24 @@
 (global-set-key (kbd "M-<up>") 'windmove-up)
 (global-set-key (kbd "M-<down>") 'windmove-down)
 
-(load-theme 'tango-dark t)
+;; (load-theme 'tango-dark t)
+(use-package doom-themes
+:ensure t
+:config
+;; Global settings (defaults)
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+(load-theme 'doom-miramare t)
 
-(add-to-list 'default-frame-alist '(font . "Ac437 ToshibaSat 8x14-14"))
+;; Enable flashing mode-line on errors
+(doom-themes-visual-bell-config)
+;; Enable custom neotree theme (all-the-icons must be installed!)
+(doom-themes-neotree-config)
+;; or for treemacs users
+(setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+(doom-themes-treemacs-config)
+;; Corrects (and improves) org-mode's native fontification.
+(doom-themes-org-config))
+
+(add-to-list 'default-frame-alist '(font . "Source Code Pro"))
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
