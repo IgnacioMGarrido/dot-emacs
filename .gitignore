@@ -1,5 +1,6 @@
 *.*~
 *.last
+autosaves
 .autosaves
 config.el
 elpa/

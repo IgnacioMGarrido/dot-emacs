@@ -1,5 +1,4 @@
 ;; -*- coding: utf-8; lexical-binding: t -*-
-
 (unless (package-installed-p 'use-package)
 	(package-refresh-contents)
 	(package-install 'use-package))
@@ -12,6 +11,7 @@
 (set-default-coding-systems 'utf-8)
 (set-language-environment "UTF-8")
 (set-selection-coding-system 'utf-8)
+'(keyboard-coding-system 'utf-8)
 ;;Refresh Buffer
 (global-set-key (kbd "<f5>") 'revert-buffer)
 (global-hl-line-mode t)
@@ -22,7 +22,10 @@
   (global-set-key (kbd "C-=") 'er/expand-region))
 
 (use-package iedit
-  :ensure t)
+  :ensure t
+  :bind (:map iedit-mode-keymap ("C-h" . #'sp-backward-delete-char))
+  :bind (:map iedit-mode-keymap ("C-f" . #'iedit-restrict-function))
+  :bind ("C-;" . #'iedit-mode))
 
 ; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
 (custom-set-variables
@@ -87,26 +90,33 @@
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (use-package company
-    :ensure t
-    :config
-    (setq company-idle-mode 0)
-    (setq company-minimum-prefix 3)
-    (add-hook 'c++-mode-hook 'company-mode)
-    (add-hook 'c-mode-hook 'company-mode) )
+	:ensure t
+	:config
+	(setq company-idle-mode 0)
+	(setq company-minimum-prefix 3)
+	(add-hook 'c++-mode-hook 'company-mode)
+	(add-hook 'c-mode-hook 'company-mode) )
 
-;;Set variables to find includes for c++ on windows
+    ;;Set variables to find includes for c++ on windows
+
   (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
-(custom-set-variables
-'(company-c-headers-path-system
-   (quote
-    ( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um")))
- '(company-clang-arguments
-   (quote
-    ("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
- '(company-clang-executable
-   "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
- '(company-clang-insert-arguments nil))
-;;TODO add additional includes (Maybe do it per project?)
+    (custom-set-variables
+    '(company-c-headers-path-system
+       (quote
+	( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um" "D:\\Work\\engine\\libs\\JTL\\include")))
+     '(company-clang-arguments
+       (quote
+	("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
+     '(company-clang-executable
+       "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
+     '(company-clang-insert-arguments nil))
+    ;;TODO add additional includes (Maybe do it per project?)
+
+;;TODO: It is extremly slow when the codebase is too large. find a way to make it faster
+;;  (use-package company-ctags
+;;    :ensure t)
+
+ ;; (with-eval-after-load 'company (company-ctags-auto-setup))
 
 ;; better matching for finding buffers
 (setq ido-enable-flex-matching t)
@@ -316,5 +326,8 @@
 ;; Corrects (and improves) org-mode's native fontification.
 (doom-themes-org-config))
 
-(add-to-list 'default-frame-alist '(font . "Source Code Pro"))
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;(add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;(set-face-attribute 'default nil :height 110)
+(set-face-attribute 'default nil :font "Source Code Pro" :height 110)
+(set-face-attribute 'variable-pitch nil :font "SF Mono-12")

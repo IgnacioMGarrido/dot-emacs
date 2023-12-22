@@ -39,8 +39,9 @@
  '(company-clang-executable
    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
  '(company-clang-insert-arguments nil)
+ '(keyboard-coding-system 'utf-8)
  '(package-selected-packages
-   '(doom-themes iedit expand-region flycheck dash rainbow-delimiters smartparens-config yasnippet which-key toc-org org-superstar org-modern counsel)))
+   '(company-ctags doom-themes iedit expand-region flycheck dash rainbow-delimiters smartparens-config yasnippet which-key toc-org org-superstar org-modern counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
