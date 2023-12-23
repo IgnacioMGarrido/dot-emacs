@@ -16,6 +16,14 @@
 (global-set-key (kbd "<f5>") 'revert-buffer)
 (global-hl-line-mode t)
 
+; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
+(custom-set-variables
+  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
+  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/"))))
+
+;; create the autosave dir if necessary, since emacs won't.
+(make-directory "~/.emacs.d/autosaves/" t)
+
 (use-package expand-region
   :ensure t
   :config
@@ -27,17 +35,39 @@
   :bind (:map iedit-mode-keymap ("C-f" . #'iedit-restrict-function))
   :bind ("C-;" . #'iedit-mode))
 
-; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
-(custom-set-variables
-  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
-  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/"))))
-
-;; create the autosave dir if necessary, since emacs won't.
-(make-directory "~/.emacs.d/autosaves/" t)
-
 (use-package which-key
       :ensure t
       :config (which-key-mode))
+
+(use-package company
+	:ensure t
+	:config
+	(setq company-idle-mode 0)
+	(setq company-minimum-prefix 3)
+	(add-hook 'c++-mode-hook 'company-mode)
+	(add-hook 'c-mode-hook 'company-mode) )
+
+    ;;Set variables to find includes for c++ on windows
+
+  (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
+    (custom-set-variables
+    '(company-c-headers-path-system
+       (quote
+	( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um")))
+     '(company-clang-arguments
+       (quote
+	("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
+     '(company-clang-executable
+       "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
+     '(company-clang-insert-arguments nil))
+    ;;TODO add additional includes (Maybe do it per project?)
+  (setq company-tooltip-limit 4)
+
+;;TODO: It is extremly slow when the codebase is too large. find a way to make it faster
+;;  (use-package company-ctags
+;;    :ensure t)
+
+;;  (with-eval-after-load 'company (company-ctags-auto-setup))
 
 (use-package counsel
       :ensure t)
@@ -87,36 +117,9 @@
 (use-package flycheck
   :ensure t
   :config
-  (add-hook 'after-init-hook #'global-flycheck-mode))
-
-(use-package company
-	:ensure t
-	:config
-	(setq company-idle-mode 0)
-	(setq company-minimum-prefix 3)
-	(add-hook 'c++-mode-hook 'company-mode)
-	(add-hook 'c-mode-hook 'company-mode) )
-
-    ;;Set variables to find includes for c++ on windows
-
-  (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional\\VC\\bin\\amd64\\amd64;"))
-    (custom-set-variables
-    '(company-c-headers-path-system
-       (quote
-	( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um" "D:\\Work\\engine\\libs\\JTL\\include")))
-     '(company-clang-arguments
-       (quote
-	("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
-     '(company-clang-executable
-       "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
-     '(company-clang-insert-arguments nil))
-    ;;TODO add additional includes (Maybe do it per project?)
-
-;;TODO: It is extremly slow when the codebase is too large. find a way to make it faster
-;;  (use-package company-ctags
-;;    :ensure t)
-
- ;; (with-eval-after-load 'company (company-ctags-auto-setup))
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (custom-set-variables '(flycheck-c/c++-clang-executable (quote "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")))
+  )
 
 ;; better matching for finding buffers
 (setq ido-enable-flex-matching t)
@@ -317,11 +320,12 @@
 (load-theme 'doom-miramare t)
 
 ;; Enable flashing mode-line on errors
-(doom-themes-visual-bell-config)
+(doom
+ -themes-visual-bell-config)
 ;; Enable custom neotree theme (all-the-icons must be installed!)
 (doom-themes-neotree-config)
 ;; or for treemacs users
-(setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+(setq doom-themes-treemacs-theme "doom-opera") ; use "doom-colors" for less minimal icon theme
 (doom-themes-treemacs-config)
 ;; Corrects (and improves) org-mode's native fontification.
 (doom-themes-org-config))

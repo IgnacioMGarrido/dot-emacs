@@ -4,6 +4,7 @@ autosaves
 .autosaves
 config.el
 elpa/
+projects
 history
 auto-save-list
 network-security.data
