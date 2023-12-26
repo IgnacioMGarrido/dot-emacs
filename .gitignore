@@ -2,6 +2,11 @@
 *.last
 autosaves
 .autosaves
+.cache/
+.lsp*
+irony/
+projectile*/
+projectile*
 config.el
 elpa/
 projects
