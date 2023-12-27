@@ -28,6 +28,31 @@
 ;; create the autosave dir if necessary, since emacs won't.
 (make-directory "~/.emacs.d/autosaves/" t)
 
+(load-theme 'tango-dark t)
+;; (use-package doom-themes
+;; :ensure t
+;; :config
+;; ;; Global settings (defaults)
+;; (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+;;       doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;; (load-theme 'doom-miramare t)
+
+;; ;; Enable flashing mode-line on errors
+;; (doom-themes-visual-bell-config)
+;; ;; Enable custom neotree theme (all-the-icons must be installed!)
+;; (doom-themes-neotree-config)
+;; ;; or for treemacs users
+;; (setq doom-themes-treemacs-theme "doom-opera") ; use "doom-colors" for less minimal icon theme
+;; (doom-themes-treemacs-config)
+;; ;; Corrects (and improves) org-mode's native fontification.
+;; (doom-themes-org-config))
+
+;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; (set-face-attribute 'default nil :height 100)
+ (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
+ (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
+
 (use-package expand-region
   :ensure t
   :config
@@ -49,114 +74,6 @@
   (global-set-key (kbd "C-x p") 'projectile-command-map)
   (projectile-mode 1))
 
-(use-package company
-		     :ensure t
-		     :config
-		     (company-tng-configure-default)
-		     (setq company-idle-mode 0.1)
-		     (setq company-minimum-prefix-length 2)
-		     (add-hook 'c++-mode-hook 'company-mode)
-		     (add-hook 'c-mode-hook 'company-mode))
-
-		 ;;Set variables to find includes for c++ on windows
-
-	       (setenv "PATH" (concat (getenv "PATH") "C:\\Program Files\\Llvm\\bin"))
-		 (custom-set-variables
-		 '(company-c-headers-path-system
-		    (quote
-		     ( "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\VC\\include" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\shared" "C:\\Program Files (x86)\\Windows Kits\\10\\10.0.19041.0\\Include\\um")))
-		  '(company-clang-arguments
-		    (quote
-		     ("-IC:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.36.32532\\include" "-Ic:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt" "-v")))
-		  '(company-clang-executable
-		    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clang.exe")
-		  '(company-clang-insert-arguments nil))
-		 ;;TODO add additional includes (Maybe do it per project?)
-	       (setq company-tooltip-limit 4)
-
-	     ;;TODO: It is extremly slow when the codebase is too large. find a way to make it faster
-	     ;;  (use-package company-ctags
-	     ;;    :ensure t)
-
-	     ;;  (with-eval-after-load 'company (company-ctags-auto-setup))
-	     ;; To make Irony server to work make sure you send this command when running M-x irony-install-server
-	     ;; "cmake" "-DCMAKE_INSTALL_PREFIX=c:/Users/ignacio.martinez/.emacs.d/irony/" "-DLIBCLANG_INCLUDE_DIR=C:\Program Files\LLVM\include" "-DLIBCLANG_LIBRARY=C:\Program Files\LLVM\lib\libclang.lib" "-A x64" "-G Visual Studio 17 2022" "c:/Users/ignacio.martinez/.emacs.d/elpa/irony-1.6.1/server" && "cmake" --build . --use-stderr --config Release --target install
-
-	     ;; Irony mode
-	     (use-package company-irony
-	       :ensure t
-	       :config (add-to-list 'company-backends 'company-irony))
-
-	     (use-package irony
-	       :ensure t
-	       :config
-	       (add-hook 'c++-mode-hook 'irony-mode)
-	       (add-hook 'c-mode-hook 'irony-mode)
-	       (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
-
- ;; Windows performance tweaks
-   (when (boundp 'w32-pipe-read-delay)
-     (setq w32-pipe-read-delay 0))
-   ;; Set the buffer size to 64K on Windows (from the original 4K)
-   (when (boundp 'w32-pipe-buffer-size)
-     (setq irony-server-w32-pipe-buffer-size (* 64 1024)))
-
-'(irony-extra-cmake-args
-  '("-DLIBCLANG_INCLUDE_DIR=C:\\Program Files\\LLVM\\include" "-DLIBCLANG_LIBRARY=C:\\Program Files\\LLVM\\lib\\libclang.lib" "-A x64" "-G Visual Studio 17 2022"))
-
-     ;;	(use-package irony-eldoc
-     ;;	  :ensure t
-     ;;	  :config
-     ;;	  (add-hook 'irony-mode-hook #'irony-eldoc))
-
-(use-package flycheck
-  :ensure t
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (custom-set-variables '(flycheck-c/c++-clang-executable (quote "C:\\Program Files\\Llvm\\bin\\clang.exe")))
-  )
-
-(use-package flycheck-irony
-  :ensure t
-   :config
-   (progn
-     (eval-after-load 'flycheck '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))))
-
-(use-package dumb-jump
-  :ensure t
-  :init
-  (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
-  :config
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
-
-;; (use-package ggtags
-;;   :ensure t
-;;   :config
-;;   (setq ggtags-executable-directory "C:\\ProgramData\\chocolatey\\lib\\universal-ctags\\tools"))
-;; (add-hook 'c-mode-common-hook
-;; 	  (lambda ()
-;; 	    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-;; 	      (ggtags-mode 1))))
-
-;; (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
-;; (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
-;; (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
-;; (define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
-;; (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
-;; (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
-
-;; (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
-
-;;(use-package lsp-mode
-;;  :ensure t
-;;  :bind (:map lsp-mode-map ("C-c l" . #'lsp-command-map))
-;;  :bind (:map lsp-mode-map ("C-c d" . #'lsp-describe-thing-at-point))
-;;  :bind (:map lsp-mode-map ("C-c a" . #'lsp-execute-code-action))
-;;  :config
-;;  (lsp-enable-which-key-integration t)
-;;  (setq lsp-clients-clangd-executable "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\Llvm\\bin\\clangd.exe")
-;;  (add-hook 'prog-mode-hook #'lsp))
-
 (use-package counsel
       :ensure t)
 
@@ -170,22 +87,22 @@
 	;; enable this if you want `swiper' to use it
 	;; (setq search-default-mode #'char-fold-to-regexp)
 	(global-set-key "\C-s" 'swiper)
-	(global-set-key (kbd "C-c C-r") 'ivy-resume)
-	(global-set-key (kbd "<f6>") 'ivy-resume)
-	(global-set-key (kbd "M-x") 'counsel-M-x)
-	(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-	(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-	(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-	(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-	(global-set-key (kbd "<f1> l") 'counsel-find-library)
-	(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-	(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-	(global-set-key (kbd "C-c g") 'counsel-git)
-	(global-set-key (kbd "C-c j") 'counsel-git-grep)
-	(global-set-key (kbd "C-c k") 'counsel-ag)
-	(global-set-key (kbd "C-x l") 'counsel-locate)
-	(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+	;; (global-set-key (kbd "C-c C-r") 'ivy-resume)
+	;; (global-set-key (kbd "<f6>") 'ivy-resume)
+	;; (global-set-key (kbd "M-x") 'counsel-M-x)
+	;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+	;; (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+	;; (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+	;; (global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
+	;; (global-set-key (kbd "<f1> l") 'counsel-find-library)
+	;; (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+	;; (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+	;; (global-set-key (kbd "C-c g") 'counsel-git)
+	;; (global-set-key (kbd "C-c j") 'counsel-git-grep)
+	;; (global-set-key (kbd "C-c k") 'counsel-ag)
+	;; (global-set-key (kbd "C-x l") 'counsel-locate)
+	;; (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+	;; (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 	))
 
 (use-package  smartparens
@@ -203,10 +120,10 @@
   (yas-global-mode 1))
 
 ;; better matching for finding buffers
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-(defalias 'list-buffers 'ibuffer)
+;; (setq ido-enable-flex-matching t)
+;; (setq ido-everywhere t)
+;; (ido-mode 1)
+;; (defalias 'list-buffers 'ibuffer)
 
 ;;Add extensions
 (setq auto-mode-alist
@@ -398,28 +315,3 @@
 (global-set-key (kbd "M-<left>") 'windmove-left)
 (global-set-key (kbd "M-<up>") 'windmove-up)
 (global-set-key (kbd "M-<down>") 'windmove-down)
-
-(load-theme 'tango-dark t)
-;; (use-package doom-themes
-;; :ensure t
-;; :config
-;; ;; Global settings (defaults)
-;; (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;;       doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;; (load-theme 'doom-miramare t)
-
-;; ;; Enable flashing mode-line on errors
-;; (doom-themes-visual-bell-config)
-;; ;; Enable custom neotree theme (all-the-icons must be installed!)
-;; (doom-themes-neotree-config)
-;; ;; or for treemacs users
-;; (setq doom-themes-treemacs-theme "doom-opera") ; use "doom-colors" for less minimal icon theme
-;; (doom-themes-treemacs-config)
-;; ;; Corrects (and improves) org-mode's native fontification.
-;; (doom-themes-org-config))
-
-;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
-;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-;; (set-face-attribute 'default nil :height 100)
- (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
- (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
