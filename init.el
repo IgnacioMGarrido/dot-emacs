@@ -47,7 +47,7 @@
    '("-DLIBCLANG_INCLUDE_DIR=C:\\Program Files\\LLVM\\include" "-DLIBCLANG_LIBRARY=C:\\Program Files\\LLVM\\lib\\libclang.lib" "-A x64" "-G Visual Studio 17 2022"))
  '(keyboard-coding-system 'utf-8)
  '(package-selected-packages
-   '(flycheck-irony irony-eldoc ggtags helm projectile Projectile dumb-jump lsp-mode company-ctags doom-themes iedit expand-region flycheck dash rainbow-delimiters smartparens-config yasnippet which-key toc-org org-superstar org-modern counsel)))
+   '(swiper flycheck-irony irony-eldoc ggtags helm projectile Projectile dumb-jump lsp-mode company-ctags doom-themes iedit expand-region flycheck dash rainbow-delimiters smartparens-config yasnippet which-key toc-org org-superstar org-modern counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -1,24 +1,113 @@
 ;; -*- coding: utf-8; lexical-binding: t -*-
-  (unless (package-installed-p 'use-package)
-	  (package-refresh-contents)
-	  (package-install 'use-package))
+    (unless (package-installed-p 'use-package)
+      (package-refresh-contents)
+      (package-install 'use-package))
 
-  (setq inhibit-startup-message t)
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
-  (scroll-bar-mode -1)
-  (setq visible-bell 1)
-  (fset 'yes-or-no-p 'y-or-n-p)
-  (set-charset-priority 'unicode)
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-language-environment "UTF-8")
-  (set-selection-coding-system 'utf-8)
-  '(keyboard-coding-system 'utf-8)
+    (require 'server)
+    (unless (server-running-p) (server-start))
+    (setq server-use-tcp t)
+    (defun server-ensure-safe-dir (dir) "Noop" t)
 
-;;Refresh Buffer
-  (global-set-key (kbd "<f5>") 'revert-buffer)
-  (global-hl-line-mode t)
+    (setq gc-cons-threshold 100000000)
+    (setq max-specpdl-size 5000)
+
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (menu-bar-mode -1)
+
+    (set-charset-priority 'unicode)
+    (prefer-coding-system 'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-language-environment "UTF-8")
+    (set-selection-coding-system 'utf-8)
+    '(keyboard-coding-system 'utf-8)
+
+    (global-hl-line-mode t)
+
+    (setq
+     ;; No need to see GNU agitprop.
+     inhibit-startup-screen t
+     ;; No need to remind me what a scratch buffer is.
+     initial-scratch-message nil
+     ;; Double-spaces after periods is morally wrong.
+     sentence-end-double-space nil
+     ;; Never ding at me, ever.
+     ring-bell-function 'ignore
+     ;; Save existing clipboard text into the kill ring before replacing it.
+     save-interprogram-paste-before-kill t
+     ;; Prompts should go in the minibuffer, not in a GUI.
+     use-dialog-box nil
+     ;; Fix undo in commands affecting the mark.
+     mark-even-if-inactive nil
+     ;; Let C-k delete the whole line.
+     kill-whole-line t
+     ;; accept 'y' or 'n' instead of yes/no
+     ;; the documentation advises against setting this variable
+     ;; the documentation can get bent imo
+     use-short-answers t
+     ;; my source directory
+     default-directory "~/.emacs.d"
+     ;; eke out a little more scrolling performance
+     fast-but-imprecise-scrolling t
+     ;; prefer newer elisp files
+     load-prefer-newer t
+     ;; when I say to quit, I mean quit
+     confirm-kill-processes nil
+     ;; if native-comp is having trouble, there's not very much I can do
+     native-comp-async-report-warnings-errors 'silent
+     ;; unicode ellipses are better
+     truncate-string-ellipsis "..."
+     ;; I want to close these fast, so switch to it so I can just hit 'q'
+     help-window-select t
+     ;; this certainly can't hurt anything
+     delete-by-moving-to-trash t
+     ;; keep the point in the same place while scrolling
+     scroll-preserve-screen-position t
+     ;; More dynamic scroll
+     scroll-step 8
+     ;; more info in completions
+     completions-detailed t
+     ;; highlight error messages more aggressively
+     next-error-message-highlight t
+     ;; don't let the minibuffer muck up my window tiling
+     read-minibuffer-restore-windows t
+     ;; scope save prompts to individual projects
+     save-some-buffers-default-predicate 'save-some-buffers-root
+     ;; don't keep duplicate entries in kill ring
+     kill-do-not-save-duplicates t
+     ;; Save last known place in file
+     save-place-mode 1
+     ;; Reset recent files
+     recentf-mode 1
+     ;; History mode
+     history-lenght 25
+     ;; Save hist mode
+     savehist-mode 1
+     )
+  ;; Startup Windowing
+
+    (defun nm-ediff-setup-windows (buffer-A buffer-B buffer-C control-buffer)
+    (ediff-setup-windows-plain buffer-A buffer-B buffer-C control-buffer))
+  (setq ediff-window-setup-function 'nm-ediff-setup-windows)
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq split-window-preferred-function nil)
+
+(setq next-line-add-newlines nil)
+(setq-default truncate-lines t)
+(setq truncate-partial-width-windows nil)
+(split-window-horizontally)
+
+;;window management
+;; (global-set-key (kbd "M-<right>") 'windmove-right)
+;; (global-set-key (kbd "M-<left>") 'windmove-left)
+;; (global-set-key (kbd "M-<up>") 'windmove-up)
+;; (global-set-key (kbd "M-<down>") 'windmove-down)
+(global-set-key (kbd "M-b") 'ido-switch-buffer)
+(global-set-key (kbd "M-B") 'ido-switch-buffer-other-window)
+(global-set-key (kbd "M-w") 'other-window)
+(global-set-key (kbd "M-f") 'find-file)
+(global-set-key (kbd "M-F") 'find-file-other-window)
+(global-set-key (kbd "M-o") 'ff-find-related-file)
 
 ; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
 (custom-set-variables
@@ -53,6 +142,10 @@
  (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
  (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
 
+(use-package which-key
+      :ensure t
+      :config (which-key-mode))
+
 (use-package expand-region
   :ensure t
   :config
@@ -63,16 +156,6 @@
   :bind (:map iedit-mode-keymap ("C-h" . #'sp-backward-delete-char))
   :bind (:map iedit-mode-keymap ("C-f" . #'iedit-restrict-function))
   :bind ("C-;" . #'iedit-mode))
-
-(use-package which-key
-      :ensure t
-      :config (which-key-mode))
-
-(use-package projectile
-  :ensure t
-  :config
-  (global-set-key (kbd "C-x p") 'projectile-command-map)
-  (projectile-mode 1))
 
 (use-package counsel
       :ensure t)
@@ -85,33 +168,25 @@
 	(setq ivy-use-virtual-buffers t)
 	(setq enable-recursive-minibuffers t)
 	;; enable this if you want `swiper' to use it
-	;; (setq search-default-mode #'char-fold-to-regexp)
+	(setq search-default-mode #'char-fold-to-regexp)
 	(global-set-key "\C-s" 'swiper)
-	;; (global-set-key (kbd "C-c C-r") 'ivy-resume)
-	;; (global-set-key (kbd "<f6>") 'ivy-resume)
-	;; (global-set-key (kbd "M-x") 'counsel-M-x)
-	;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-	;; (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-	;; (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-	;; (global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-	;; (global-set-key (kbd "<f1> l") 'counsel-find-library)
-	;; (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-	;; (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-	;; (global-set-key (kbd "C-c g") 'counsel-git)
-	;; (global-set-key (kbd "C-c j") 'counsel-git-grep)
-	;; (global-set-key (kbd "C-c k") 'counsel-ag)
-	;; (global-set-key (kbd "C-x l") 'counsel-locate)
-	;; (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-	;; (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+	(global-set-key (kbd "C-c C-r") 'ivy-resume)
+	(global-set-key (kbd "<f6>") 'ivy-resume)
+	(global-set-key (kbd "M-x") 'counsel-M-x)
+	(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+	(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+	(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+	(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
+	(global-set-key (kbd "<f1> l") 'counsel-find-library)
+	(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+	(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+	(global-set-key (kbd "C-c g") 'counsel-git)
+	(global-set-key (kbd "C-c j") 'counsel-git-grep)
+	(global-set-key (kbd "C-c k") 'counsel-ag)
+	(global-set-key (kbd "C-x l") 'counsel-locate)
+	(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 	))
-
-(use-package  smartparens
-  :ensure t
-  :config
-  (use-package smartparens-config))
-
-(use-package rainbow-delimiters
-  :ensure t)
 
 (use-package yasnippet
   :ensure t
@@ -120,10 +195,14 @@
   (yas-global-mode 1))
 
 ;; better matching for finding buffers
-;; (setq ido-enable-flex-matching t)
-;; (setq ido-everywhere t)
-;; (ido-mode 1)
-;; (defalias 'list-buffers 'ibuffer)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+(defalias 'list-buffers 'ibuffer)
+
+(add-hook 'prog-mode-hook
+	  (lambda () (interactive)
+	    (setq show-trailing-whitespace 1)))
 
 ;;Add extensions
 (setq auto-mode-alist
@@ -140,109 +219,109 @@
 
 (require 'cc-mode)
 
- (defconst ry-c-style
- '((c-electric-pound-behavior . nil)
-  (c-tab-always-indent       . t)
-  (c-hanging-braces-alist    . ((class-open)
-				   (class-close)
-				   (defun-open)
-				   (defun-close)
-				   (inline-open)
-				   (inline-close)
-				   (brace-list-open)
-				   (brace-list-close)
-				   (brace-list-intro)
-				   (brace-list-entry)
-				   (block-open)
-				   (block-close)
-				   (substatement-open)
-				   (state-case-open)
-				   (class-open)))
-   (c-hanging-colons-alist    . ((inher-intro)
-				(case-label)
-				(label)
-				(access-label)
-				(access-key)
-				(member-init-intro)))
-   (c-cleanup-list            . (scope-operator
-				list-close-comma
-				defun-close-semi))
-   (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
-				(label                 . -4)
-				(access-label          . -4)
-				(substatement-open     . 0)
-				(statement-case-intro  . 0)
-				(statement-case-open   . 4)
-				(statement-block-intro . c-lineup-for)
-				(block-open            . c-lineup-assignments)
-				(statement-cont        . (c-lineup-assignments 4))
-				(inexpr-class          . c-lineup-arglist-intro-after-paren)
-				(case-label            . 4)
-				(block-open            . 0)
-				(inline-open           . 0)
-				(innamespace           . 0)
-				(topmost-intro-cont    . 0) ; recently changed
-				(knr-argdecl-intro     . -4)
-				(brace-entry-open      . c-lineup-assignments)
-				(brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
-				(brace-list-open       . (c-lineup-assignments 0))
-				(brace-list-open	 . 0)
-				(brace-list-intro      . 4)
-				(brace-list-entry      . 0)
-				(brace-list-close      . 0)))
-	(c-echo-syntactic-information-p . t))
-	"ry-c-style")
+(defconst ry-c-style
+  '((c-electric-pound-behavior . nil)
+    (c-tab-always-indent       . t)
+    (c-hanging-braces-alist    . ((class-open)
+				  (class-close)
+				  (defun-open)
+				  (defun-close)
+				  (inline-open)
+				  (inline-close)
+				  (brace-list-open)
+				  (brace-list-close)
+				  (brace-list-intro)
+				  (brace-list-entry)
+				  (block-open)
+				  (block-close)
+				  (substatement-open)
+				  (state-case-open)
+				  (class-open)))
+    (c-hanging-colons-alist    . ((inher-intro)
+				  (case-label)
+				  (label)
+				  (access-label)
+				  (access-key)
+				  (member-init-intro)))
+    (c-cleanup-list            . (scope-operator
+				  list-close-comma
+				  defun-close-semi))
+    (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
+				  (label                 . -4)
+				  (access-label          . -4)
+				  (substatement-open     . 0)
+				  (statement-case-intro  . 0)
+				  (statement-case-open   . 4)
+				  (statement-block-intro . c-lineup-for)
+				  (block-open            . c-lineup-assignments)
+				  (statement-cont        . (c-lineup-assignments 4))
+				  (inexpr-class          . c-lineup-arglist-intro-after-paren)
+				  (case-label            . 4)
+				  (block-open            . 0)
+				  (inline-open           . 0)
+				  (innamespace           . 0)
+				  (topmost-intro-cont    . 0) ; recently changed
+				  (knr-argdecl-intro     . -4)
+				  (brace-entry-open      . c-lineup-assignments)
+				  (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
+				  (brace-list-open       . (c-lineup-assignments 0))
+				  (brace-list-open	 . 0)
+				  (brace-list-intro      . 4)
+				  (brace-list-entry      . 0)
+				  (brace-list-close      . 0)))
+    (c-echo-syntactic-information-p . t))
+  "ry-c-style")
 
 (defun ry-c-style-hook-notabs ()
-	(c-add-style "ryc" ry-c-style t)
-	(setq tab-width 4)
-	(c-set-offset 'innamespace 0)
-	(c-toggle-auto-hungry-state 1)
-	(setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
-	(setq electric-pair-inhibit-predicate
-	      (lambda (c)
-		(if (char-equal c ?\') t (electric-pair-default-inhibit c))))
-	(sp-pair "'" nil :actions :rem)
-	(setq sp-highlight-pair-overlay nil)
-	(defadvice align-regexp (around align-regexp-with-spaces activate)
-	  (let ((indent-tabs-mode nil))
-	    ad-do-it)))
+  (c-add-style "ryc" ry-c-style t)
+  (setq tab-width 4)
+  (c-set-offset 'innamespace 0)
+  (c-toggle-auto-hungry-state 1)
+  (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
+  (setq electric-pair-inhibit-predicate
+	(lambda (c)
+	  (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
+  (sp-pair "'" nil :actions :rem)
+  (setq sp-highlight-pair-overlay nil)
+  (defadvice align-regexp (around align-regexp-with-spaces activate)
+    (let ((indent-tabs-mode nil))
+      ad-do-it)))
 
-      (defun psj-c-style-gl ()
-      (setq indent-tabs-mode 'only)
-      (defadvice align-regexp (around align-regexp-with-spaces activate)
-	(let ((indent-tabs-mode nil))
-	  ad-do-it)))
+(defun psj-c-style-gl ()
+  (setq indent-tabs-mode 'only)
+  (defadvice align-regexp (around align-regexp-with-spaces activate)
+    (let ((indent-tabs-mode nil))
+      ad-do-it)))
 
 (defun my-move-function-up ()
-    "Move current function up."
-    (interactive)
-    (save-excursion
-      (c-mark-function)
-      (let ((fun-beg (point))
-	    (fun-end (mark)))
-	(transpose-regions (progn
-			     (c-beginning-of-defun 1)
-			     (point))
-			   (progn
-			     (c-end-of-defun 1)
-			     (point))
-			   fun-beg fun-end))))
+  "Move current function up."
+  (interactive)
+  (save-excursion
+    (c-mark-function)
+    (let ((fun-beg (point))
+	  (fun-end (mark)))
+      (transpose-regions (progn
+			   (c-beginning-of-defun 1)
+			   (point))
+			 (progn
+			   (c-end-of-defun 1)
+			   (point))
+			 fun-beg fun-end))))
 
 (defun my-move-function-down ()
-    "Move current function down."
-    (interactive)
-    (save-excursion
-      (c-mark-function)
-      (let ((fun-beg (point))
-	    (fun-end (mark)))
-	(transpose-regions fun-beg fun-end
-			   (progn
-			     (c-beginning-of-defun -1)
-			     (point))
-			   (progn
-			     (c-end-of-defun 1)
-			     (point))))))
+  "Move current function down."
+  (interactive)
+  (save-excursion
+    (c-mark-function)
+    (let ((fun-beg (point))
+	  (fun-end (mark)))
+      (transpose-regions fun-beg fun-end
+			 (progn
+			   (c-beginning-of-defun -1)
+			   (point))
+			 (progn
+			   (c-end-of-defun 1)
+			   (point))))))
 
 
 (add-hook 'c-mode-common-hook 'ry-c-style-hook-notabs)
@@ -252,14 +331,8 @@
 (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
 ;;Disable word wrapping
 (add-hook 'c-mode-common-hook 'toggle-truncate-lines nil)
-;;TODO: This messes up previous tab setup
-;;(add-hook 'c-mode-common-hook #'smartparens-config)
 
-;; jump between .cpp and .h
-(add-hook 'c-mode-common-hook
-	  (lambda() 
-	    (local-set-key  (kbd "C-c m d") 'ff-find-other-file)))
-
+(setq org-support-shift-select t)
 (require 'org-tempo)
 (use-package org
   :hook ((org-mode . visual-line-mode) (org-mode . pt/org-mode-hook))
@@ -309,9 +382,3 @@
   :config (org-superstar-configure-like-org-bullets))
 
 (setq org-src-tab-acts-natively t)
-
-;;window management
-(global-set-key (kbd "M-<right>") 'windmove-right)
-(global-set-key (kbd "M-<left>") 'windmove-left)
-(global-set-key (kbd "M-<up>") 'windmove-up)
-(global-set-key (kbd "M-<down>") 'windmove-down)
