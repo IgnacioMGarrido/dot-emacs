@@ -1,7 +1,7 @@
 (require 'package)
 (setq package-enable-at-startup nil)
- (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages"))
-;; (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+ (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+ (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 
 (package-initialize)
 ;;Bootstrap 'use-package'
@@ -22,7 +22,7 @@
  ;; If there is more than one, they won't work right.
  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/")))
- '(package-selected-packages '(projectile company org-superstar org-modern)))
+ '(package-selected-packages '(helm-gtags projectile company org-superstar org-modern)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
