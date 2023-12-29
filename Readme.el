@@ -1,3 +1,65 @@
+(setq
+ make-backup-files nil
+ auto-save-default nil
+ create-lockfiles nil)
+(setq custom-file (make-temp-name "/tmp/"))
+
+;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+ ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+ ;; (set-face-attribute 'default nil :height 100)
+ (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
+ (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
+;; (set-face-attribute 'default nil
+;;                     :font "Source Code Pro"
+;;                     :height 100
+;;                     :weight 'Medium)
+
+;; (set-face-attribute 'variable-pitch nil
+;;                     :font "Source Code Pro"
+;;                     :height 100
+;;                     :weight 'Medium)
+
+;; (set-face-attribute 'fixed-pitch nil
+;;                     :font "Source Code Pro"
+;;                     :height 100
+;;                     :weight 'Medium)
+
+;; (set-face-attribute 'font-lock-comment-face nil
+;;                     :slant 'italic)
+
+;; (set-face-attribute 'font-lock-keyword-face nil
+;;                     :slant 'italic)
+
+;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+
+;;(load-theme 'tango-dark t)
+   (use-package doom-themes
+   :ensure t
+   :config
+   ;; Global settings (defaults)
+   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	 doom-themes-enable-italic t) ; if nil, italics is universally disabled
+   (load-theme 'doom-ir-black t)
+
+   ;; Enable flashing mode-line on errors
+   (doom-themes-visual-bell-config)
+   ;; Enable custom neotree theme (all-the-icons must be installed!)
+   (doom-themes-neotree-config)
+   ;; or for treemacs users
+   (setq doom-themes-treemacs-theme "doom-ir-black") ; use "doom-colors" for less minimal icon theme
+   (doom-themes-treemacs-config)
+   ;; Corrects (and improves) org-mode's native fontification.
+   (doom-themes-org-config))
+
+
+(let ((installed (package-installed-p 'all-the-icons)))
+  (use-package all-the-icons :ensure t)
+  (unless installed (all-the-icons-install-fonts)))
+
+(use-package all-the-icons-dired
+  :after all-the-icons
+  :hook (dired-mode . all-the-icons-dired-mode))
+
 ;; -*- coding: utf-8; lexical-binding: t -*-
       (unless (package-installed-p 'use-package)
 	(package-refresh-contents)
@@ -104,84 +166,13 @@
 ;;(setq truncate-partial-width-windows nil)
 (split-window-horizontally)
 
-;;window management
-;; (global-set-key (kbd "M-<right>") 'windmove-right)
-;; (global-set-key (kbd "M-<left>") 'windmove-left)
-;; (global-set-key (kbd "M-<up>") 'windmove-up)
-;; (global-set-key (kbd "M-<down>") 'windmove-down)
-(global-set-key (kbd "M-b") 'ido-switch-buffer)
-(global-set-key (kbd "M-B") 'ido-switch-buffer-other-window)
-(global-set-key (kbd "M-w") 'other-window)
-(global-set-key (kbd "M-f") 'find-file)
-(global-set-key (kbd "M-F") 'find-file-other-window)
-(global-set-key (kbd "M-o") 'ff-find-related-file)
-(global-set-key (kbd "C-u") 'undo)
-(global-set-key (kbd "C-w") 'kill-ring-save)
-(global-set-key (kbd "C-W") 'kill)
-(global-set-key (kbd "C-y") 'yank)
-(global-set-key (kbd "M-j") 'imenu)
-
-(setq
- make-backup-files nil
- auto-save-default nil
- create-lockfiles nil)
-(setq custom-file (make-temp-name "/tmp/"))
-
-;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
- ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
- ;; (set-face-attribute 'default nil :height 100)
- (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
- (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
-;; (set-face-attribute 'default nil
-;;                     :font "Source Code Pro"
-;;                     :height 100
-;;                     :weight 'Medium)
-
-;; (set-face-attribute 'variable-pitch nil
-;;                     :font "Source Code Pro"
-;;                     :height 100
-;;                     :weight 'Medium)
-
-;; (set-face-attribute 'fixed-pitch nil
-;;                     :font "Source Code Pro"
-;;                     :height 100
-;;                     :weight 'Medium)
-
-;; (set-face-attribute 'font-lock-comment-face nil
-;;                     :slant 'italic)
-
-;; (set-face-attribute 'font-lock-keyword-face nil
-;;                     :slant 'italic)
-
-;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
-
-;;(load-theme 'tango-dark t)
-   (use-package doom-themes
-   :ensure t
-   :config
-   ;; Global settings (defaults)
-   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-	 doom-themes-enable-italic t) ; if nil, italics is universally disabled
-   (load-theme 'doom-ir-black t)
-
-   ;; Enable flashing mode-line on errors
-   (doom-themes-visual-bell-config)
-   ;; Enable custom neotree theme (all-the-icons must be installed!)
-   (doom-themes-neotree-config)
-   ;; or for treemacs users
-   (setq doom-themes-treemacs-theme "doom-ir-black") ; use "doom-colors" for less minimal icon theme
-   (doom-themes-treemacs-config)
-   ;; Corrects (and improves) org-mode's native fontification.
-   (doom-themes-org-config))
-
-
-(let ((installed (package-installed-p 'all-the-icons)))
-  (use-package all-the-icons :ensure t)
-  (unless installed (all-the-icons-install-fonts)))
-
-(use-package all-the-icons-dired
-  :after all-the-icons
-  :hook (dired-mode . all-the-icons-dired-mode))
+(use-package projectile
+  :ensure t
+  :config
+  (global-set-key (kbd "C-x p") 'projectile-command-map)
+  (setq projectile-use-git-grep t)
+  (setq vc-git-grep-template "git --no-pager grep -i -rn <C> -e <R> -- <F>")
+  (projectile-mode 1))
 
 (use-package which-key
       :ensure t
@@ -214,10 +205,10 @@
 	(global-set-key (kbd "C-c C-r") 'ivy-resume)
 	(global-set-key (kbd "<f6>") 'ivy-resume)
 	(global-set-key (kbd "M-x") 'counsel-M-x)
-	(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+	(global-set-key (kbd "M-f") 'counsel-find-file)
 	(global-set-key (kbd "<f1> f") 'counsel-describe-function)
 	(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-	(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
+	(global-set-key (kbd "<f1> 1") 'counsel-describe-symbol)
 	(global-set-key (kbd "<f1> l") 'counsel-find-library)
 	(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
 	(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
@@ -240,6 +231,11 @@
 (setq ido-everywhere t)
 (ido-mode 1)
 (defalias 'list-buffers 'ibuffer)
+
+(use-package smartparens
+  :ensure t
+  :config
+  (use-package smartparens-config))
 
 (add-hook 'prog-mode-hook
 	  (lambda () (interactive)
@@ -422,3 +418,47 @@
   :config (org-superstar-configure-like-org-bullets))
 
 (setq org-src-tab-acts-natively t)
+
+(defun pt/unbind-bad-keybindings ()
+  "Remove unhelpful keybindings."
+  (-map (lambda (x) (unbind-key x)) '("C-x C-f" ;; find-file-read-only
+				      "C-x C-d" ;; list-directory
+				      "C-z" ;; suspend-frame
+				      "C-x C-z" ;; again
+				      "<mouse-2>" ;; pasting with mouse-wheel click
+				      "<C-wheel-down>" ;; text scale adjust
+				      "<C-wheel-up>" ;; ditto
+				      "s-n" ;; make-frame
+				      "s-t" ;; ns-popup-font-panel
+				      "s-p" ;; ns-print-buffer
+				      "C-x C-q" ;; read-only-mode
+				      "C-/" ;; Undo
+				      "C-r" ;; Reverse search
+				      )))
+(use-package s
+  :ensure t)
+(use-package dash
+  :ensure t
+  :config (pt/unbind-bad-keybindings))
+(use-package shut-up
+  :ensure t)
+
+;;window management
+(global-set-key (kbd "M-<right>") 'windmove-right)
+(global-set-key (kbd "M-<left>") 'windmove-left)
+(global-set-key (kbd "M-<up>") 'windmove-up)
+(global-set-key (kbd "M-<down>") 'windmove-down)
+
+(global-set-key (kbd "M-b") 'ido-switch-buffer)
+(global-set-key (kbd "M-B") 'ido-switch-buffer-other-window)
+;;(global-set-key (kbd "M-w") 'other-window)
+(global-set-key (kbd "M-f") 'find-file)
+(global-set-key (kbd "M-F") 'find-file-other-window)
+
+(setq ff-always-in-other-window t)
+(setq ff-always-try-to-create nil)
+(global-set-key (kbd "M-o") 'ff-find-related-file)
+
+(global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-r") 'undo-redo)
+(global-set-key (kbd "M-j") 'imenu)
