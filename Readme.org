@@ -1,102 +1,109 @@
 * Interface tweaks
 #+begin_src emacs-lisp
-      ;; -*- coding: utf-8; lexical-binding: t -*-
-      (unless (package-installed-p 'use-package)
-	(package-refresh-contents)
-	(package-install 'use-package))
+	;; -*- coding: utf-8; lexical-binding: t -*-
+	(unless (package-installed-p 'use-package)
+	  (package-refresh-contents)
+	  (package-install 'use-package))
 
-      (require 'server)
-      (unless (server-running-p) (server-start))
-      (setq server-use-tcp t)
-      (defun server-ensure-safe-dir (dir) "Noop" t)
+	(require 'server)
+	(unless (server-running-p) (server-start))
+	(setq server-use-tcp t)
+	(defun server-ensure-safe-dir (dir) "Noop" t)
 
-      (setq gc-cons-threshold 100000000)
-      (setq max-specpdl-size 5000)
+	(setq gc-cons-threshold 100000000)
+	(setq max-specpdl-size 5000)
 
-      (tool-bar-mode -1)
-      (scroll-bar-mode -1)
-      (menu-bar-mode -1)
+	(tool-bar-mode -1)
+	(scroll-bar-mode -1)
+	(menu-bar-mode -1)
 
-      (set-charset-priority 'unicode)
-      (prefer-coding-system 'utf-8)
-      (set-default-coding-systems 'utf-8)
-      (set-language-environment "UTF-8")
-      (set-selection-coding-system 'utf-8)
-      '(keyboard-coding-system 'utf-8)
+	(set-charset-priority 'unicode)
+	(prefer-coding-system 'utf-8)
+	(set-default-coding-systems 'utf-8)
+	(set-language-environment "UTF-8")
+	(set-selection-coding-system 'utf-8)
+	'(keyboard-coding-system 'utf-8)
 
-      (global-hl-line-mode t)
+	(global-hl-line-mode t)
+  (when (window-system)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (tooltip-mode -1)
+    (pixel-scroll-mode))
 
-      (setq
-       ;; No need to see GNU agitprop.
-       inhibit-startup-screen t
-       ;; No need to remind me what a scratch buffer is.
-       initial-scratch-message nil
-       ;; Double-spaces after periods is morally wrong.
-       sentence-end-double-space nil
-       ;; Never ding at me, ever.
-       ring-bell-function 'ignore
-       ;; Save existing clipboard text into the kill ring before replacing it.
-       save-interprogram-paste-before-kill t
-       ;; Prompts should go in the minibuffer, not in a GUI.
-       use-dialog-box nil
-       ;; Fix undo in commands affecting the mark.
-       mark-even-if-inactive nil
-       ;; Let C-k delete the whole line.
-       kill-whole-line t
-       ;; accept 'y' or 'n' instead of yes/no
-       ;; the documentation advises against setting this variable
-       ;; the documentation can get bent imo
-       use-short-answers t
-       ;; my source directory
-       default-directory "~/.emacs.d"
-       ;; eke out a little more scrolling performance
-       fast-but-imprecise-scrolling t
-       ;; prefer newer elisp files
-       load-prefer-newer t
-       ;; when I say to quit, I mean quit
-       confirm-kill-processes nil
-       ;; if native-comp is having trouble, there's not very much I can do
-       native-comp-async-report-warnings-errors 'silent
-       ;; unicode ellipses are better
-       truncate-string-ellipsis "..."
-       ;; I want to close these fast, so switch to it so I can just hit 'q'
-       help-window-select t
-       ;; this certainly can't hurt anything
-       delete-by-moving-to-trash t
-       ;; keep the point in the same place while scrolling
-       scroll-preserve-screen-position t
-       ;; More dynamic scroll
-       scroll-step 8
-       ;; more info in completions
-       completions-detailed t
-       ;; highlight error messages more aggressively
-       next-error-message-highlight t
-       ;; don't let the minibuffer muck up my window tiling
-       read-minibuffer-restore-windows t
-       ;; scope save prompts to individual projects
-       save-some-buffers-default-predicate 'save-some-buffers-root
-       ;; don't keep duplicate entries in kill ring
-       kill-do-not-save-duplicates t
-       ;; Save last known place in file
-       save-place-mode 1
-       ;; Reset recent files
-       recentf-mode 1
-       ;; History mode
-       history-lenght 25
-       ;; Save hist mode
-       savehist-mode 1
-       )
-    ;; Startup Windowing
+  (when (eq system-type 'darwin)
+    (setq ns-auto-hide-menu-bar t))
 
-      (defun nm-ediff-setup-windows (buffer-A buffer-B buffer-C control-buffer)
-      (ediff-setup-windows-plain buffer-A buffer-B buffer-C control-buffer))
-    (setq ediff-window-setup-function 'nm-ediff-setup-windows)
-    (setq ediff-split-window-function 'split-window-horizontally)
-    (setq split-window-preferred-function nil)
+	(setq
+	 ;; No need to see GNU agitprop.
+	 inhibit-startup-screen t
+	 ;; No need to remind me what a scratch buffer is.
+	 initial-scratch-message nil
+	 ;; Double-spaces after periods is morally wrong.
+	 sentence-end-double-space nil
+	 ;; Never ding at me, ever.
+	 ring-bell-function 'ignore
+	 ;; Save existing clipboard text into the kill ring before replacing it.
+	 save-interprogram-paste-before-kill t
+	 ;; Prompts should go in the minibuffer, not in a GUI.
+	 use-dialog-box nil
+	 ;; Fix undo in commands affecting the mark.
+	 mark-even-if-inactive nil
+	 ;; Let C-k delete the whole line.
+	 kill-whole-line t
+	 ;; accept 'y' or 'n' instead of yes/no
+	 ;; the documentation advises against setting this variable
+	 ;; the documentation can get bent imo
+	 use-short-answers t
+	 ;; my source directory
+	 default-directory "~/.emacs.d"
+	 ;; eke out a little more scrolling performance
+	 fast-but-imprecise-scrolling t
+	 ;; prefer newer elisp files
+	 load-prefer-newer t
+	 ;; when I say to quit, I mean quit
+	 confirm-kill-processes nil
+	 ;; if native-comp is having trouble, there's not very much I can do
+	 native-comp-async-report-warnings-errors 'silent
+	 ;; unicode ellipses are better
+	 truncate-string-ellipsis "..."
+	 ;; I want to close these fast, so switch to it so I can just hit 'q'
+	 help-window-select t
+	 ;; this certainly can't hurt anything
+	 delete-by-moving-to-trash t
+	 ;; keep the point in the same place while scrolling
+	 scroll-preserve-screen-position t
+	 ;; More dynamic scroll
+	 scroll-step 8
+	 ;; more info in completions
+	 completions-detailed t
+	 ;; highlight error messages more aggressively
+	 next-error-message-highlight t
+	 ;; don't let the minibuffer muck up my window tiling
+	 read-minibuffer-restore-windows t
+	 ;; scope save prompts to individual projects
+	 save-some-buffers-default-predicate 'save-some-buffers-root
+	 ;; don't keep duplicate entries in kill ring
+	 kill-do-not-save-duplicates t
+	 ;; Save last known place in file
+	 save-place-mode 1
+	 ;; Reset recent files
+	 recentf-mode 1
+	 ;; History mode
+	 history-lenght 25
+	 ;; Save hist mode
+	 savehist-mode 1
+	 )
+      ;; Startup Windowing
+
+  (defun nm-ediff-setup-windows (buffer-A buffer-B buffer-C control-buffer)
+    (ediff-setup-windows-plain buffer-A buffer-B buffer-C control-buffer))
+  (setq ediff-window-setup-function 'nm-ediff-setup-windows)
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq split-window-preferred-function nil)
 
   (setq next-line-add-newlines nil)
-  (setq-default truncate-lines t)
-  (setq truncate-partial-width-windows nil)
+  ;;(setq truncate-partial-width-windows nil)
   (split-window-horizontally)
   #+end_src
 * Key Bindings
@@ -112,51 +119,83 @@
   (global-set-key (kbd "M-f") 'find-file)
   (global-set-key (kbd "M-F") 'find-file-other-window)
   (global-set-key (kbd "M-o") 'ff-find-related-file)
-
+  (global-set-key (kbd "C-u") 'undo)
+  (global-set-key (kbd "C-w") 'kill-ring-save)
+  (global-set-key (kbd "C-W") 'kill)
+  (global-set-key (kbd "C-y") 'yank)
+  (global-set-key (kbd "M-j") 'imenu)
     #+end_src
 
 * UI
 ** Autosaves and backups
 #+begin_src emacs-lisp
-  ; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
-(custom-set-variables
-  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
-  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/"))))
-
-;; create the autosave dir if necessary, since emacs won't.
-(make-directory "~/.emacs.d/autosaves/" t)
-
+  (setq
+   make-backup-files nil
+   auto-save-default nil
+   create-lockfiles nil)
+  (setq custom-file (make-temp-name "/tmp/"))
 #+end_src
-** Themes
-#+begin_src emacs-lisp
-  (load-theme 'tango-dark t)
-  ;; (use-package doom-themes
-  ;; :ensure t
-  ;; :config
-  ;; ;; Global settings (defaults)
-  ;; (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-  ;;       doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  ;; (load-theme 'doom-miramare t)
-
-  ;; ;; Enable flashing mode-line on errors
-  ;; (doom-themes-visual-bell-config)
-  ;; ;; Enable custom neotree theme (all-the-icons must be installed!)
-  ;; (doom-themes-neotree-config)
-  ;; ;; or for treemacs users
-  ;; (setq doom-themes-treemacs-theme "doom-opera") ; use "doom-colors" for less minimal icon theme
-  ;; (doom-themes-treemacs-config)
-  ;; ;; Corrects (and improves) org-mode's native fontification.
-  ;; (doom-themes-org-config))
-#+end_src
-
 ** Fonts
 #+BEGIN_SRC emacs-lisp
- ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
- ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
- ;; (set-face-attribute 'default nil :height 100)
-  (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
-  (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
-#+END_SRC
+   ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+   ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+   ;; (set-face-attribute 'default nil :height 100)
+   (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
+   (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
+  ;; (set-face-attribute 'default nil
+  ;;                     :font "Source Code Pro"
+  ;;                     :height 100
+  ;;                     :weight 'Medium)
+
+  ;; (set-face-attribute 'variable-pitch nil
+  ;;                     :font "Source Code Pro"
+  ;;                     :height 100
+  ;;                     :weight 'Medium)
+
+  ;; (set-face-attribute 'fixed-pitch nil
+  ;;                     :font "Source Code Pro"
+  ;;                     :height 100
+  ;;                     :weight 'Medium)
+
+  ;; (set-face-attribute 'font-lock-comment-face nil
+  ;;                     :slant 'italic)
+  
+  ;; (set-face-attribute 'font-lock-keyword-face nil
+  ;;                     :slant 'italic)
+
+  ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+ #+END_SRC
+
+** Themes and Visuals
+#+begin_src emacs-lisp
+    ;;(load-theme 'tango-dark t)
+     (use-package doom-themes
+     :ensure t
+     :config
+     ;; Global settings (defaults)
+     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	   doom-themes-enable-italic t) ; if nil, italics is universally disabled
+     (load-theme 'doom-ir-black t)
+
+     ;; Enable flashing mode-line on errors
+     (doom-themes-visual-bell-config)
+     ;; Enable custom neotree theme (all-the-icons must be installed!)
+     (doom-themes-neotree-config)
+     ;; or for treemacs users
+     (setq doom-themes-treemacs-theme "doom-ir-black") ; use "doom-colors" for less minimal icon theme
+     (doom-themes-treemacs-config)
+     ;; Corrects (and improves) org-mode's native fontification.
+     (doom-themes-org-config))
+
+
+  (let ((installed (package-installed-p 'all-the-icons)))
+    (use-package all-the-icons :ensure t)
+    (unless installed (all-the-icons-install-fonts)))
+
+  (use-package all-the-icons-dired
+    :after all-the-icons
+    :hook (dired-mode . all-the-icons-dired-mode))
+  #+end_src
 
 * Editor
 ** Which Key
@@ -236,6 +275,13 @@ use C-; to activate it.
   (defalias 'list-buffers 'ibuffer)
 #+end_src
 
+** Smartparens
+#+BEGIN_SRC emacs-lispTODO
+  (use-package smartparens
+    :ensure t
+    :config
+    (use-package smartparens-config))
+#+END_SRC
 
 * Coding
 ** Basic hooks
@@ -262,59 +308,58 @@ use C-; to activate it.
 ** C++ Mode
 #+begin_src emacs-lisp
   (require 'cc-mode)
-
   (defconst ry-c-style
-    '((c-electric-pound-behavior . nil)
-      (c-tab-always-indent       . t)
-      (c-hanging-braces-alist    . ((class-open)
-				    (class-close)
-				    (defun-open)
-				    (defun-close)
-				    (inline-open)
-				    (inline-close)
-				    (brace-list-open)
-				    (brace-list-close)
-				    (brace-list-intro)
-				    (brace-list-entry)
-				    (block-open)
-				    (block-close)
-				    (substatement-open)
-				    (state-case-open)
-				    (class-open)))
-      (c-hanging-colons-alist    . ((inher-intro)
-				    (case-label)
-				    (label)
-				    (access-label)
-				    (access-key)
-				    (member-init-intro)))
-      (c-cleanup-list            . (scope-operator
-				    list-close-comma
-				    defun-close-semi))
-      (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
-				    (label                 . -4)
-				    (access-label          . -4)
-				    (substatement-open     . 0)
-				    (statement-case-intro  . 0)
-				    (statement-case-open   . 4)
-				    (statement-block-intro . c-lineup-for)
-				    (block-open            . c-lineup-assignments)
-				    (statement-cont        . (c-lineup-assignments 4))
-				    (inexpr-class          . c-lineup-arglist-intro-after-paren)
-				    (case-label            . 4)
-				    (block-open            . 0)
-				    (inline-open           . 0)
-				    (innamespace           . 0)
-				    (topmost-intro-cont    . 0) ; recently changed
-				    (knr-argdecl-intro     . -4)
-				    (brace-entry-open      . c-lineup-assignments)
-				    (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
-				    (brace-list-open       . (c-lineup-assignments 0))
-				    (brace-list-open	 . 0)
-				    (brace-list-intro      . 4)
-				    (brace-list-entry      . 0)
-				    (brace-list-close      . 0)))
-      (c-echo-syntactic-information-p . t))
-    "ry-c-style")
+   '((c-electric-pound-behavior . nil)
+    (c-tab-always-indent       . t)
+    (c-hanging-braces-alist    . ((class-open)
+				     (class-close)
+				     (defun-open)
+				     (defun-close)
+				     (inline-open)
+				     (inline-close)
+				     (brace-list-open)
+				     (brace-list-close)
+				     (brace-list-intro)
+				     (brace-list-entry)
+				     (block-open)
+				     (block-close)
+				     (substatement-open)
+				     (state-case-open)
+				     (class-open)))
+     (c-hanging-colons-alist    . ((inher-intro)
+				  (case-label)
+				  (label)
+				  (access-label)
+				  (access-key)
+				  (member-init-intro)))
+     (c-cleanup-list            . (scope-operator
+				  list-close-comma
+				  defun-close-semi))
+     (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
+				  (label                 . -4)
+				  (access-label          . -4)
+				  (substatement-open     . 0)
+				  (statement-case-intro  . 0)
+				  (statement-case-open   . 4)
+				  (statement-block-intro . c-lineup-for)
+				  (block-open            . c-lineup-assignments)
+				  (statement-cont        . (c-lineup-assignments 4))
+				  (inexpr-class          . c-lineup-arglist-intro-after-paren)
+				  (case-label            . 4)
+				  (block-open            . 0)
+				  (inline-open           . 0)
+				  (innamespace           . 0)
+				  (topmost-intro-cont    . 0) ; recently changed
+				  (knr-argdecl-intro     . -4)
+				  (brace-entry-open      . c-lineup-assignments)
+				  (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
+				  (brace-list-open       . (c-lineup-assignments 0))
+				  (brace-list-open	 . 0)
+				  (brace-list-intro      . 4)
+				  (brace-list-entry      . 0)
+				  (brace-list-close      . 0)))
+	  (c-echo-syntactic-information-p . t))
+	  "ry-c-style")
 
   (defun ry-c-style-hook-notabs ()
     (c-add-style "ryc" ry-c-style t)
@@ -325,8 +370,8 @@ use C-; to activate it.
     (setq electric-pair-inhibit-predicate
 	  (lambda (c)
 	    (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
-    (sp-pair "'" nil :actions :rem)
-    (setq sp-highlight-pair-overlay nil)
+    ;;(sp-pair "'" nil :actions :rem)
+    ;;(setq sp-highlight-pair-overlay nil)
     (defadvice align-regexp (around align-regexp-with-spaces activate)
       (let ((indent-tabs-mode nil))
 	ad-do-it)))
@@ -372,7 +417,7 @@ use C-; to activate it.
   (add-hook 'c-mode-common-hook 'psj-c-style-gl)
   (add-hook 'c-mode-hook 'display-line-numbers-mode)
   (add-hook 'c++-mode-hook 'display-line-numbers-mode)
-  (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
+  ;;(add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
   ;;Disable word wrapping
   (add-hook 'c-mode-common-hook 'toggle-truncate-lines nil)
 #+end_src

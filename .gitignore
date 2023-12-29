@@ -5,7 +5,7 @@ autosaves
 .cache/
 .lsp*
 irony/
-projectile*/
+fonts/
 projectile*
 config.el
 elpa/
