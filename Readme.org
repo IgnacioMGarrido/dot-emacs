@@ -601,5 +601,5 @@ Bind new Keybindings
 
   (when (string-equal system-type "windows-nt")
     (global-set-key (kbd "C-c k") 'grep))
-    #+end_src
+#+end_src
 

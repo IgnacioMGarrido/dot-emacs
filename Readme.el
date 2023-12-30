@@ -1,8 +1,10 @@
-(setq
- make-backup-files nil
- auto-save-default nil
- create-lockfiles nil)
-(setq custom-file (make-temp-name "/tmp/"))
+; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
+(custom-set-variables
+  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
+  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/"))))
+
+;; create the autosave dir if necessary, since emacs won't.
+(make-directory "~/.emacs.d/autosaves/" t)
 
 ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
  ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -61,30 +63,30 @@
 ;;   :hook (dired-mode . all-the-icons-dired-mode))
 
 ;; -*- coding: utf-8; lexical-binding: t -*-
-      (unless (package-installed-p 'use-package)
-	(package-refresh-contents)
-	(package-install 'use-package))
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-      (require 'server)
-      (unless (server-running-p) (server-start))
-      (setq server-use-tcp t)
-      (defun server-ensure-safe-dir (dir) "Noop" t)
+(require 'server)
+(unless (server-running-p) (server-start))
+(setq server-use-tcp t)
+(defun server-ensure-safe-dir (dir) "Noop" t)
 
-      (setq gc-cons-threshold 100000000)
-      (setq max-specpdl-size 5000)
+(setq gc-cons-threshold 100000000)
+(setq max-specpdl-size 5000)
 
-      (tool-bar-mode -1)
-      (scroll-bar-mode -1)
-      (menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
 
-      (set-charset-priority 'unicode)
-      (prefer-coding-system 'utf-8)
-      (set-default-coding-systems 'utf-8)
-      (set-language-environment "UTF-8")
-      (set-selection-coding-system 'utf-8)
-      '(keyboard-coding-system 'utf-8)
+(set-charset-priority 'unicode)
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-language-environment "UTF-8")
+(set-selection-coding-system 'utf-8)
+'(keyboard-coding-system 'utf-8)
 
-      (global-hl-line-mode t)
+(global-hl-line-mode t)
 (when (window-system)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
@@ -94,67 +96,67 @@
 (when (eq system-type 'darwin)
   (setq ns-auto-hide-menu-bar t))
 
-      (setq
-       ;; No need to see GNU agitprop.
-       inhibit-startup-screen t
-       ;; No need to remind me what a scratch buffer is.
-       initial-scratch-message nil
-       ;; Double-spaces after periods is morally wrong.
-       sentence-end-double-space nil
-       ;; Never ding at me, ever.
-       ring-bell-function 'ignore
-       ;; Save existing clipboard text into the kill ring before replacing it.
-       save-interprogram-paste-before-kill t
-       ;; Prompts should go in the minibuffer, not in a GUI.
-       use-dialog-box nil
-       ;; Fix undo in commands affecting the mark.
-       mark-even-if-inactive nil
-       ;; Let C-k delete the whole line.
-       kill-whole-line t
-       ;; accept 'y' or 'n' instead of yes/no
-       ;; the documentation advises against setting this variable
-       ;; the documentation can get bent imo
-       use-short-answers t
-       ;; my source directory
-       default-directory "~/.emacs.d"
-       ;; eke out a little more scrolling performance
-       fast-but-imprecise-scrolling t
-       ;; prefer newer elisp files
-       load-prefer-newer t
-       ;; when I say to quit, I mean quit
-       confirm-kill-processes nil
-       ;; if native-comp is having trouble, there's not very much I can do
-       native-comp-async-report-warnings-errors 'silent
-       ;; unicode ellipses are better
-       truncate-string-ellipsis "..."
-       ;; I want to close these fast, so switch to it so I can just hit 'q'
-       help-window-select t
-       ;; this certainly can't hurt anything
-       delete-by-moving-to-trash t
-       ;; keep the point in the same place while scrolling
-       scroll-preserve-screen-position t
-       ;; More dynamic scroll
-       scroll-step 8
-       ;; more info in completions
-       completions-detailed t
-       ;; highlight error messages more aggressively
-       next-error-message-highlight t
-       ;; don't let the minibuffer muck up my window tiling
-       read-minibuffer-restore-windows t
-       ;; scope save prompts to individual projects
-       save-some-buffers-default-predicate 'save-some-buffers-root
-       ;; don't keep duplicate entries in kill ring
-       kill-do-not-save-duplicates t
-       ;; Save last known place in file
-       save-place-mode 1
-       ;; Reset recent files
-       recentf-mode 1
-       ;; History mode
-       history-lenght 25
-       ;; Save hist mode
-       savehist-mode 1
-       )
-    ;; Startup Windowing
+(setq
+ ;; No need to see GNU agitprop.
+ inhibit-startup-screen t
+ ;; No need to remind me what a scratch buffer is.
+ initial-scratch-message nil
+ ;; Double-spaces after periods is morally wrong.
+ sentence-end-double-space nil
+ ;; Never ding at me, ever.
+ ring-bell-function 'ignore
+ ;; Save existing clipboard text into the kill ring before replacing it.
+ save-interprogram-paste-before-kill t
+ ;; Prompts should go in the minibuffer, not in a GUI.
+ use-dialog-box nil
+ ;; Fix undo in commands affecting the mark.
+ mark-even-if-inactive nil
+ ;; Let C-k delete the whole line.
+ kill-whole-line t
+ ;; accept 'y' or 'n' instead of yes/no
+ ;; the documentation advises against setting this variable
+ ;; the documentation can get bent imo
+ use-short-answers t
+ ;; my source directory
+ default-directory "~/.emacs.d"
+ ;; eke out a little more scrolling performance
+ fast-but-imprecise-scrolling t
+ ;; prefer newer elisp files
+ load-prefer-newer t
+ ;; when I say to quit, I mean quit
+ confirm-kill-processes nil
+ ;; if native-comp is having trouble, there's not very much I can do
+ native-comp-async-report-warnings-errors 'silent
+ ;; unicode ellipses are better
+ truncate-string-ellipsis "..."
+ ;; I want to close these fast, so switch to it so I can just hit 'q'
+ help-window-select t
+ ;; this certainly can't hurt anything
+ delete-by-moving-to-trash t
+ ;; keep the point in the same place while scrolling
+ scroll-preserve-screen-position t
+ ;; More dynamic scroll
+ scroll-step 8
+ ;; more info in completions
+ completions-detailed t
+ ;; highlight error messages more aggressively
+ next-error-message-highlight t
+ ;; don't let the minibuffer muck up my window tiling
+ read-minibuffer-restore-windows t
+ ;; scope save prompts to individual projects
+ save-some-buffers-default-predicate 'save-some-buffers-root
+ ;; don't keep duplicate entries in kill ring
+ kill-do-not-save-duplicates t
+ ;; Save last known place in file
+ save-place-mode 1
+ ;; Reset recent files
+ recentf-mode 1
+ ;; History mode
+ history-lenght 25
+ ;; Save hist mode
+ savehist-mode 1
+ )
+;; Startup Windowing
 
 (defun nm-ediff-setup-windows (buffer-A buffer-B buffer-C control-buffer)
   (ediff-setup-windows-plain buffer-A buffer-B buffer-C control-buffer))
@@ -170,7 +172,11 @@
 (when (string-equal system-type "windows-nt")
     (setq grep-command "findstr -s -n -i -l -c:"))
 
-(require 'project)
+(use-package projectile
+:ensure t
+:config
+(global-set-key (kbd "C-x p") 'projectile-command-map)
+(projectile-mode 1))
 
 (use-package which-key
       :ensure t
@@ -244,13 +250,13 @@
 (setq auto-mode-alist
       (append
        '(("\\.cpp$"   . c++-mode)
-	("\\.hpp$"    . c++-mode)
-	("\\.c$"      . c++-mode)
-	("\\.h$"      . c++-mode)
-	("\\.inl$"    . c++-mode)
-	("\\.hpp$"    . c++-mode)
-	("\\.txt$"    . indented-text-mode)
-	("\\.lua$"    . lua-mode))
+	 ("\\.hpp$"    . c++-mode)
+	 ("\\.c$"      . c++-mode)
+	 ("\\.h$"      . c++-mode)
+	 ("\\.inl$"    . c++-mode)
+	 ("\\.hpp$"    . c++-mode)
+	 ("\\.txt$"    . indented-text-mode)
+	 ("\\.lua$"    . lua-mode))
        auto-mode-alist))
 
 (require 'cc-mode)
@@ -422,66 +428,6 @@
 
 (setq org-src-tab-acts-natively t)
 
-(defun im-swap-buffers-in-windows ()
-  "Put the buffer from the selected window in next window, and vice versa"
-  (interactive)
-  (let* ((this (selected-window))
-	 (other (next-window))
-	 (this-buffer (window-buffer this))
-	 (other-buffer (window-buffer other)))
-    (set-window-buffer other this-buffer)
-    (set-window-buffer this other-buffer)))
-
-(defun im-surround (begin end open close)
-  "Put OPEN at START and CLOSE at END of the region.
-	  If you omit CLOSE, it will reuse OPEN."
-  (interactive  "r\nsStart: \nsEnd: ")
-  ;; (when (string= close "")
-  ;;   (setq close open))
-	    ;;; try and be 'smart' about it
-      (if (string= close "")
-	  (if (string= open "{") (setq close "}")
-	    (if (string= open "<") (setq close ">")
-	      (if (string= open "[") (setq close "]")
-		(setq close open)))))
-      (save-excursion
-	(goto-char end)
-	(insert close)
-	(goto-char begin)
-	(insert open)))
-
-(defun im-surround-by-curly-brackets-func (begin end)
-  (interactive "r")
-  (save-excursion
-    (goto-char end)
-    (insert "}")
-    (goto-char begin)
-    (insert "{")))
-(defun im-surround-by-curly-brackets ()
-  (interactive)
-  (call-interactively 'im-surround-by-curly-brackets-func))
-
-  ;;;;;;;;;;;;;;;; macros and insertions
-(defun im-todo ()
-  (interactive "*")
-  (insert "//TODO(im): ")
-  )
-(defun im-urgent ()
-  (interactive "*")
-  (insert "//URGENT(im): ")
-  )
-
-(defun ds-beginning-of-line (arg)
-  "moves to the begining of line, or from there to first non-ws char"
-  (interactive "p")
-  (if (and (looking-at "^") (= arg 1)) (skip-chars-forward " \t") (move-beginning-of-line arg)))
-
-(defun next-word-first-letter (p)
-  (interactive "d")
-  (forward-word)
-  (forward-word)
-  (backward-word))
-
 (defun pt/unbind-bad-keybindings ()
   "Remove unhelpful keybindings."
   (-map (lambda (x) (unbind-key x)) '("C-x C-f" ;; find-file-read-only
@@ -507,29 +453,29 @@
   :ensure t)
 
 ;;window management
-  (global-set-key (kbd "M-<right>") 'windmove-right)
-  (global-set-key (kbd "M-<left>") 'windmove-left)
-  (global-set-key (kbd "M-<up>") 'windmove-up)
-  (global-set-key (kbd "M-<down>") 'windmove-down)
+(global-set-key (kbd "M-<right>") 'windmove-right)
+(global-set-key (kbd "M-<left>") 'windmove-left)
+(global-set-key (kbd "M-<up>") 'windmove-up)
+(global-set-key (kbd "M-<down>") 'windmove-down)
 
-  ;;Movement
-  (global-set-key "\C-a" 'ds-beginning-of-line)
+;;Movement
+(global-set-key "\C-a" 'ds-beginning-of-line)
 
-  (global-set-key (kbd "M-b") 'ido-switch-buffer)
-  (global-set-key (kbd "M-B") 'ido-switch-buffer-other-window)
+(global-set-key (kbd "M-b") 'ido-switch-buffer)
+(global-set-key (kbd "M-B") 'ido-switch-buffer-other-window)
 
-  ;;(global-set-key (kbd "M-w") 'other-window)
-  (global-set-key (kbd "M-f") 'find-file)
-  (global-set-key (kbd "M-F") 'find-file-other-window)
+;;(global-set-key (kbd "M-w") 'other-window)
+(global-set-key (kbd "M-f") 'find-file)
+(global-set-key (kbd "M-F") 'find-file-other-window)
 
-  (setq ff-always-in-other-window t)
-  (setq ff-always-try-to-create nil)
-  (global-set-key (kbd "M-o") 'ff-find-related-file)
+(setq ff-always-in-other-window t)
+(setq ff-always-try-to-create nil)
+(global-set-key (kbd "M-o") 'ff-find-related-file)
 
-  (global-set-key (kbd "C-z") 'undo)
-  (global-set-key (kbd "C-r") 'undo-redo)
-  (global-set-key (kbd "M-j") 'imenu)
-
+(global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-r") 'undo-redo)
+(global-set-key (kbd "M-j") 'imenu)
+(global-set-key (kbd "C-q") 'im-swap-buffers-in-windows)
 ;;Replace
 (global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
 
