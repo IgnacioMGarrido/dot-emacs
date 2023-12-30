@@ -282,6 +282,18 @@ use C-; to activate it.
     (use-package smartparens-config))
 #+END_SRC
 
+** DumbJump
+#+BEGIN_SRC emacs-lisp
+  (use-package dumb-jump
+    :ensure t
+    :init
+    (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
+    :config
+    (setq dumb-jump-force-searcher nil)
+    (setq dumb-jump-git-grep-search-args "pattern -- :/")
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+#+END_SRC
+
 * Coding
 ** Basic hooks
 #+begin_src emacs-lisp
@@ -480,7 +492,7 @@ use C-; to activate it.
       
 * Custom Functions
 #+BEGIN_SRC emacs-lisp
-  (defun im- swap-buffers-in-windows ()
+  (defun im-swap-buffers-in-windows ()
     "Put the buffer from the selected window in next window, and vice versa"
     (interactive)
     (let* ((this (selected-window))
@@ -594,8 +606,9 @@ Bind new Keybindings
 
   (global-set-key (kbd "C-z") 'undo)
   (global-set-key (kbd "C-r") 'undo-redo)
-  (global-set-key (kbd "M-j") 'imenu)
+  (global-set-key (kbd "M-m") 'imenu)
   (global-set-key (kbd "C-q") 'im-swap-buffers-in-windows)
+  (global-set-key (kbd "M-.") 'xref-find-definitions-other-window)
   ;;Replace
   (global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
 

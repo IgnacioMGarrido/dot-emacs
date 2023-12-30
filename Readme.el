@@ -242,6 +242,15 @@
   :config
   (use-package smartparens-config))
 
+(use-package dumb-jump
+  :ensure t
+  :init
+  (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
+  :config
+  (setq dumb-jump-force-searcher nil)
+  (setq dumb-jump-git-grep-search-args "pattern -- :/")
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+
 (add-hook 'prog-mode-hook
 	  (lambda () (interactive)
 	    (setq show-trailing-whitespace 1)))
@@ -474,7 +483,7 @@
 
 (global-set-key (kbd "C-z") 'undo)
 (global-set-key (kbd "C-r") 'undo-redo)
-(global-set-key (kbd "M-j") 'imenu)
+(global-set-key (kbd "M-m") 'imenu)
 (global-set-key (kbd "C-q") 'im-swap-buffers-in-windows)
 ;;Replace
 (global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
