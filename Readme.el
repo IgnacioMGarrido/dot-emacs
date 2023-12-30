@@ -56,9 +56,9 @@
   (use-package all-the-icons :ensure t)
   (unless installed (all-the-icons-install-fonts)))
 
-(use-package all-the-icons-dired
-  :after all-the-icons
-  :hook (dired-mode . all-the-icons-dired-mode))
+;; (use-package all-the-icons-dired
+;;   :after all-the-icons
+;;   :hook (dired-mode . all-the-icons-dired-mode))
 
 ;; -*- coding: utf-8; lexical-binding: t -*-
       (unless (package-installed-p 'use-package)
@@ -166,13 +166,11 @@
 ;;(setq truncate-partial-width-windows nil)
 (split-window-horizontally)
 
-(use-package projectile
-  :ensure t
-  :config
-  (global-set-key (kbd "C-x p") 'projectile-command-map)
-  (setq projectile-use-git-grep t)
-  (setq vc-git-grep-template "git --no-pager grep -i -rn <C> -e <R> -- <F>")
-  (projectile-mode 1))
+(setq grep-command "grep -irHn ")
+(when (string-equal system-type "windows-nt")
+    (setq grep-command "findstr -s -n -i -l -c:"))
+
+(require 'project)
 
 (use-package which-key
       :ensure t
@@ -201,6 +199,7 @@
 	(setq enable-recursive-minibuffers t)
 	;; enable this if you want `swiper' to use it
 	(setq search-default-mode #'char-fold-to-regexp)
+
 	(global-set-key "\C-s" 'swiper)
 	(global-set-key (kbd "C-c C-r") 'ivy-resume)
 	(global-set-key (kbd "<f6>") 'ivy-resume)
@@ -214,7 +213,7 @@
 	(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
 	(global-set-key (kbd "C-c g") 'counsel-git)
 	(global-set-key (kbd "C-c j") 'counsel-git-grep)
-	(global-set-key (kbd "C-c k") 'counsel-ag)
+	(global-set-key (kbd "C-c k") 'counsel-grep)
 	(global-set-key (kbd "C-x l") 'counsel-locate)
 	(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
 	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
@@ -368,6 +367,10 @@
 ;;Disable word wrapping
 (add-hook 'c-mode-common-hook 'toggle-truncate-lines nil)
 
+;;Adding directorise to search for related files
+(setq ff-search-directories
+    '("." "../src" "../include" "../../include" "../code" "../include/*" "../../include/*"))
+
 (setq org-support-shift-select t)
 (require 'org-tempo)
 (use-package org
@@ -419,6 +422,66 @@
 
 (setq org-src-tab-acts-natively t)
 
+(defun im-swap-buffers-in-windows ()
+  "Put the buffer from the selected window in next window, and vice versa"
+  (interactive)
+  (let* ((this (selected-window))
+	 (other (next-window))
+	 (this-buffer (window-buffer this))
+	 (other-buffer (window-buffer other)))
+    (set-window-buffer other this-buffer)
+    (set-window-buffer this other-buffer)))
+
+(defun im-surround (begin end open close)
+  "Put OPEN at START and CLOSE at END of the region.
+	  If you omit CLOSE, it will reuse OPEN."
+  (interactive  "r\nsStart: \nsEnd: ")
+  ;; (when (string= close "")
+  ;;   (setq close open))
+	    ;;; try and be 'smart' about it
+      (if (string= close "")
+	  (if (string= open "{") (setq close "}")
+	    (if (string= open "<") (setq close ">")
+	      (if (string= open "[") (setq close "]")
+		(setq close open)))))
+      (save-excursion
+	(goto-char end)
+	(insert close)
+	(goto-char begin)
+	(insert open)))
+
+(defun im-surround-by-curly-brackets-func (begin end)
+  (interactive "r")
+  (save-excursion
+    (goto-char end)
+    (insert "}")
+    (goto-char begin)
+    (insert "{")))
+(defun im-surround-by-curly-brackets ()
+  (interactive)
+  (call-interactively 'im-surround-by-curly-brackets-func))
+
+  ;;;;;;;;;;;;;;;; macros and insertions
+(defun im-todo ()
+  (interactive "*")
+  (insert "//TODO(im): ")
+  )
+(defun im-urgent ()
+  (interactive "*")
+  (insert "//URGENT(im): ")
+  )
+
+(defun ds-beginning-of-line (arg)
+  "moves to the begining of line, or from there to first non-ws char"
+  (interactive "p")
+  (if (and (looking-at "^") (= arg 1)) (skip-chars-forward " \t") (move-beginning-of-line arg)))
+
+(defun next-word-first-letter (p)
+  (interactive "d")
+  (forward-word)
+  (forward-word)
+  (backward-word))
+
 (defun pt/unbind-bad-keybindings ()
   "Remove unhelpful keybindings."
   (-map (lambda (x) (unbind-key x)) '("C-x C-f" ;; find-file-read-only
@@ -444,21 +507,31 @@
   :ensure t)
 
 ;;window management
-(global-set-key (kbd "M-<right>") 'windmove-right)
-(global-set-key (kbd "M-<left>") 'windmove-left)
-(global-set-key (kbd "M-<up>") 'windmove-up)
-(global-set-key (kbd "M-<down>") 'windmove-down)
+  (global-set-key (kbd "M-<right>") 'windmove-right)
+  (global-set-key (kbd "M-<left>") 'windmove-left)
+  (global-set-key (kbd "M-<up>") 'windmove-up)
+  (global-set-key (kbd "M-<down>") 'windmove-down)
 
-(global-set-key (kbd "M-b") 'ido-switch-buffer)
-(global-set-key (kbd "M-B") 'ido-switch-buffer-other-window)
-;;(global-set-key (kbd "M-w") 'other-window)
-(global-set-key (kbd "M-f") 'find-file)
-(global-set-key (kbd "M-F") 'find-file-other-window)
+  ;;Movement
+  (global-set-key "\C-a" 'ds-beginning-of-line)
 
-(setq ff-always-in-other-window t)
-(setq ff-always-try-to-create nil)
-(global-set-key (kbd "M-o") 'ff-find-related-file)
+  (global-set-key (kbd "M-b") 'ido-switch-buffer)
+  (global-set-key (kbd "M-B") 'ido-switch-buffer-other-window)
 
-(global-set-key (kbd "C-z") 'undo)
-(global-set-key (kbd "C-r") 'undo-redo)
-(global-set-key (kbd "M-j") 'imenu)
+  ;;(global-set-key (kbd "M-w") 'other-window)
+  (global-set-key (kbd "M-f") 'find-file)
+  (global-set-key (kbd "M-F") 'find-file-other-window)
+
+  (setq ff-always-in-other-window t)
+  (setq ff-always-try-to-create nil)
+  (global-set-key (kbd "M-o") 'ff-find-related-file)
+
+  (global-set-key (kbd "C-z") 'undo)
+  (global-set-key (kbd "C-r") 'undo-redo)
+  (global-set-key (kbd "M-j") 'imenu)
+
+;;Replace
+(global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
+
+(when (string-equal system-type "windows-nt")
+  (global-set-key (kbd "C-c k") 'grep))
