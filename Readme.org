@@ -1,13 +1,12 @@
 * UI
 ** Autosaves and backups
 #+begin_src emacs-lisp
-  ; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
-(custom-set-variables
-  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
-  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/"))))
+  (setq
+   make-backup-files nil
+   auto-save-default nil
+   create-lockfiles nil)
 
-;; create the autosave dir if necessary, since emacs won't.
-(make-directory "~/.emacs.d/autosaves/" t)
+  (setq custom-file (make-temp-name "/tmp/"))
 #+end_src
 ** Fonts
 #+BEGIN_SRC emacs-lisp
@@ -210,6 +209,7 @@
     :config
     (global-set-key (kbd "C-=") 'er/expand-region))
 #+end_src
+
 ** IEdit
 Very useful tool, lets you refactor code easily by selecting all accurences of a word
 use C-; to activate it.

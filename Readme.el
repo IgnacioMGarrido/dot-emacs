@@ -1,10 +1,7 @@
-; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
-(custom-set-variables
-  '(auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
-  '(backup-directory-alist '((".*" . "~/.emacs.d/backups/"))))
-
-;; create the autosave dir if necessary, since emacs won't.
-(make-directory "~/.emacs.d/autosaves/" t)
+(setq
+ make-backup-files nil
+ auto-save-default nil
+ create-lockfiles nil)
 
 ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
  ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -437,6 +434,66 @@
 
 (setq org-src-tab-acts-natively t)
 
+(defun im-swap-buffers-in-windows ()
+  "Put the buffer from the selected window in next window, and vice versa"
+  (interactive)
+  (let* ((this (selected-window))
+	 (other (next-window))
+	 (this-buffer (window-buffer this))
+	 (other-buffer (window-buffer other)))
+    (set-window-buffer other this-buffer)
+    (set-window-buffer this other-buffer)))
+
+(defun im-surround (begin end open close)
+  "Put OPEN at START and CLOSE at END of the region.
+	  If you omit CLOSE, it will reuse OPEN."
+  (interactive  "r\nsStart: \nsEnd: ")
+  ;; (when (string= close "")
+  ;;   (setq close open))
+	    ;;; try and be 'smart' about it
+  (if (string= close "")
+      (if (string= open "{") (setq close "}")
+	(if (string= open "<") (setq close ">")
+	  (if (string= open "[") (setq close "]")
+	    (setq close open)))))
+  (save-excursion
+    (goto-char end)
+    (insert close)
+    (goto-char begin)
+    (insert open)))
+
+(defun im-surround-by-curly-brackets-func (begin end)
+  (interactive "r")
+  (save-excursion
+    (goto-char end)
+    (insert "}")
+    (goto-char begin)
+    (insert "{")))
+(defun im-surround-by-curly-brackets ()
+  (interactive)
+  (call-interactively 'im-surround-by-curly-brackets-func))
+
+  ;;;;;;;;;;;;;;;; macros and insertions
+(defun im-todo ()
+  (interactive "*")
+  (insert "//TODO(im): ")
+  )
+(defun im-urgent ()
+  (interactive "*")
+  (insert "//URGENT(im): ")
+  )
+
+(defun ds-beginning-of-line (arg)
+  "moves to the begining of line, or from there to first non-ws char"
+  (interactive "p")
+  (if (and (looking-at "^") (= arg 1)) (skip-chars-forward " \t") (move-beginning-of-line arg)))
+
+(defun next-word-first-letter (p)
+  (interactive "d")
+  (forward-word)
+  (forward-word)
+  (backward-word))
+
 (defun pt/unbind-bad-keybindings ()
   "Remove unhelpful keybindings."
   (-map (lambda (x) (unbind-key x)) '("C-x C-f" ;; find-file-read-only
@@ -485,6 +542,7 @@
 (global-set-key (kbd "C-r") 'undo-redo)
 (global-set-key (kbd "M-m") 'imenu)
 (global-set-key (kbd "C-q") 'im-swap-buffers-in-windows)
+(global-set-key (kbd "M-.") 'xref-find-definitions-other-window)
 ;;Replace
 (global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
 
