@@ -3,6 +3,8 @@
  auto-save-default nil
  create-lockfiles nil)
 
+(setq custom-file (make-temp-name "/tmp/"))
+
 ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
  ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
  ;; (set-face-attribute 'default nil :height 100)

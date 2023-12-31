@@ -70,6 +70,13 @@
   ;;   :hook (dired-mode . all-the-icons-dired-mode))
   #+end_src
 
+
+
+* Basic Requires
+#+BEGIN_SRC emacs-lisp
+ (require 'cc-mode)
+#+END_SRC
+
 * Interface tweaks
 #+begin_src emacs-lisp
   ;; -*- coding: utf-8; lexical-binding: t -*-
@@ -265,6 +272,18 @@ use C-; to activate it.
     (yas-global-mode 1))
 #+end_src
 
+** Company
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (setq company-idle-mode 0)
+    (setq company-minimum-prefix 2)
+    (add-hook 'c++-mode-hook 'company-mode)
+    (add-hook 'c-mode-hook 'company-mode))
+
+#+END_SRC
+
 ** Better Matching funcs
 #+begin_src emacs-lisp
    ;; better matching for finding buffers
@@ -290,7 +309,6 @@ use C-; to activate it.
     (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
     :config
     (setq dumb-jump-force-searcher nil)
-    (setq dumb-jump-git-grep-search-args "pattern -- :/")
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 #+END_SRC
 
@@ -318,7 +336,6 @@ use C-; to activate it.
 #+end_src
 ** C++ Mode
 #+begin_src emacs-lisp
-  (require 'cc-mode)
   (defconst ry-c-style
    '((c-electric-pound-behavior . nil)
     (c-tab-always-indent       . t)
