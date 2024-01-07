@@ -6,32 +6,33 @@
 (setq custom-file (make-temp-name "/tmp/"))
 
 ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
- ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
- ;; (set-face-attribute 'default nil :height 100)
- (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
- (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
-;; (set-face-attribute 'default nil
-;;                     :font "Source Code Pro"
-;;                     :height 100
-;;                     :weight 'Medium)
+   ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+   ;; (set-face-attribute 'default nil :height 100)
+   ;; (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
+(set-face-attribute 'default nil :font "Liberation Mono" :height 115)
+(set-face-attribute 'variable-pitch nil :font "SF Mono-12")
+  ;; (set-face-attribute 'default nil
+  ;;                     :font "Source Code Pro"
+  ;;                     :height 100
+  ;;                     :weight 'Medium)
 
-;; (set-face-attribute 'variable-pitch nil
-;;                     :font "Source Code Pro"
-;;                     :height 100
-;;                     :weight 'Medium)
+  ;; (set-face-attribute 'variable-pitch nil
+  ;;                     :font "Source Code Pro"
+  ;;                     :height 100
+  ;;                     :weight 'Medium)
 
-;; (set-face-attribute 'fixed-pitch nil
-;;                     :font "Source Code Pro"
-;;                     :height 100
-;;                     :weight 'Medium)
+  ;; (set-face-attribute 'fixed-pitch nil
+  ;;                     :font "Source Code Pro"
+  ;;                     :height 100
+  ;;                     :weight 'Medium)
 
-;; (set-face-attribute 'font-lock-comment-face nil
-;;                     :slant 'italic)
+  ;; (set-face-attribute 'font-lock-comment-face nil
+  ;;                     :slant 'italic)
 
-;; (set-face-attribute 'font-lock-keyword-face nil
-;;                     :slant 'italic)
+  ;; (set-face-attribute 'font-lock-keyword-face nil
+  ;;                     :slant 'italic)
 
-;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+  ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
 
 ;;(load-theme 'tango-dark t)
    (use-package doom-themes
@@ -40,14 +41,14 @@
    ;; Global settings (defaults)
    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
 	 doom-themes-enable-italic t) ; if nil, italics is universally disabled
-   (load-theme 'doom-ir-black t)
+   (load-theme 'doom-gruvbox t)
 
    ;; Enable flashing mode-line on errors
    (doom-themes-visual-bell-config)
    ;; Enable custom neotree theme (all-the-icons must be installed!)
    (doom-themes-neotree-config)
    ;; or for treemacs users
-   (setq doom-themes-treemacs-theme "doom-ir-black") ; use "doom-colors" for less minimal icon theme
+   (setq doom-themes-treemacs-theme "doom-gruvbox") ; use "doom-colors" for less minimal icon theme
    (doom-themes-treemacs-config)
    ;; Corrects (and improves) org-mode's native fontification.
    (doom-themes-org-config))
@@ -60,6 +61,8 @@
 ;; (use-package all-the-icons-dired
 ;;   :after all-the-icons
 ;;   :hook (dired-mode . all-the-icons-dired-mode))
+
+(require 'cc-mode)
 
 ;; -*- coding: utf-8; lexical-binding: t -*-
 (unless (package-installed-p 'use-package)
@@ -175,6 +178,7 @@
 :ensure t
 :config
 (global-set-key (kbd "C-x p") 'projectile-command-map)
+(global-set-key (kbd "C-x b") 'projectile-switch-to-buffer)
 (projectile-mode 1))
 
 (use-package which-key
@@ -224,6 +228,14 @@
 	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 	))
 
+(use-package company
+  :ensure t
+  :config
+  (setq company-idle-mode 0)
+  (setq company-minimum-prefix 2)
+  (add-hook 'c++-mode-hook 'company-mode)
+  (add-hook 'c-mode-hook 'company-mode))
+
 (use-package yasnippet
   :ensure t
   :config
@@ -247,7 +259,6 @@
   (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
   :config
   (setq dumb-jump-force-searcher nil)
-  (setq dumb-jump-git-grep-search-args "pattern -- :/")
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 (add-hook 'prog-mode-hook
@@ -267,110 +278,109 @@
 	 ("\\.lua$"    . lua-mode))
        auto-mode-alist))
 
-(require 'cc-mode)
 (defconst ry-c-style
- '((c-electric-pound-behavior . nil)
-  (c-tab-always-indent       . t)
-  (c-hanging-braces-alist    . ((class-open)
-				   (class-close)
-				   (defun-open)
-				   (defun-close)
-				   (inline-open)
-				   (inline-close)
-				   (brace-list-open)
-				   (brace-list-close)
-				   (brace-list-intro)
-				   (brace-list-entry)
-				   (block-open)
-				   (block-close)
-				   (substatement-open)
-				   (state-case-open)
-				   (class-open)))
-   (c-hanging-colons-alist    . ((inher-intro)
-				(case-label)
-				(label)
-				(access-label)
-				(access-key)
-				(member-init-intro)))
-   (c-cleanup-list            . (scope-operator
-				list-close-comma
-				defun-close-semi))
-   (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
-				(label                 . -4)
-				(access-label          . -4)
-				(substatement-open     . 0)
-				(statement-case-intro  . 0)
-				(statement-case-open   . 4)
-				(statement-block-intro . c-lineup-for)
-				(block-open            . c-lineup-assignments)
-				(statement-cont        . (c-lineup-assignments 4))
-				(inexpr-class          . c-lineup-arglist-intro-after-paren)
-				(case-label            . 4)
-				(block-open            . 0)
-				(inline-open           . 0)
-				(innamespace           . 0)
-				(topmost-intro-cont    . 0) ; recently changed
-				(knr-argdecl-intro     . -4)
-				(brace-entry-open      . c-lineup-assignments)
-				(brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
-				(brace-list-open       . (c-lineup-assignments 0))
-				(brace-list-open	 . 0)
-				(brace-list-intro      . 4)
-				(brace-list-entry      . 0)
-				(brace-list-close      . 0)))
-	(c-echo-syntactic-information-p . t))
-	"ry-c-style")
+  '((c-electric-pound-behavior . nil)
+   (c-tab-always-indent       . t)
+   (c-hanging-braces-alist    . ((class-open)
+				    (class-close)
+				    (defun-open)
+				    (defun-close)
+				    (inline-open)
+				    (inline-close)
+				    (brace-list-open)
+				    (brace-list-close)
+				    (brace-list-intro)
+				    (brace-list-entry)
+				    (block-open)
+				    (block-close)
+				    (substatement-open)
+				    (state-case-open)
+				    (class-open)))
+    (c-hanging-colons-alist    . ((inher-intro)
+				 (case-label)
+				 (label)
+				 (access-label)
+				 (access-key)
+				 (member-init-intro)))
+    (c-cleanup-list            . (scope-operator
+				 list-close-comma
+				 defun-close-semi))
+    (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
+				 (label                 . -4)
+				 (access-label          . -4)
+				 (substatement-open     . 0)
+				 (statement-case-intro  . 0)
+				 (statement-case-open   . 4)
+				 (statement-block-intro . c-lineup-for)
+				 (block-open            . c-lineup-assignments)
+				 (statement-cont        . (c-lineup-assignments 4))
+				 (inexpr-class          . c-lineup-arglist-intro-after-paren)
+				 (case-label            . 4)
+				 (block-open            . 0)
+				 (inline-open           . 0)
+				 (innamespace           . 0)
+				 (topmost-intro-cont    . 0) ; recently changed
+				 (knr-argdecl-intro     . -4)
+				 (brace-entry-open      . c-lineup-assignments)
+				 (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
+				 (brace-list-open       . (c-lineup-assignments 0))
+				 (brace-list-open	 . 0)
+				 (brace-list-intro      . 4)
+				 (brace-list-entry      . 0)
+				 (brace-list-close      . 0)))
+	 (c-echo-syntactic-information-p . t))
+	 "ry-c-style")
 
-(defun ry-c-style-hook-notabs ()
-  (c-add-style "ryc" ry-c-style t)
-  (setq tab-width 4)
-  (c-set-offset 'innamespace 0)
-  (c-toggle-auto-hungry-state 1)
-  (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
-  (setq electric-pair-inhibit-predicate
-	(lambda (c)
-	  (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
-  ;;(sp-pair "'" nil :actions :rem)
-  ;;(setq sp-highlight-pair-overlay nil)
-  (defadvice align-regexp (around align-regexp-with-spaces activate)
-    (let ((indent-tabs-mode nil))
-      ad-do-it)))
+ (defun ry-c-style-hook-notabs ()
+   (c-add-style "ryc" ry-c-style t)
+   (setq tab-width 4)
+   (c-set-offset 'innamespace 0)
+   (c-toggle-auto-hungry-state 1)
+   (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
+   (setq electric-pair-inhibit-predicate
+	 (lambda (c)
+	   (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
+   ;;(sp-pair "'" nil :actions :rem)
+   ;;(setq sp-highlight-pair-overlay nil)
+   (defadvice align-regexp (around align-regexp-with-spaces activate)
+     (let ((indent-tabs-mode nil))
+       ad-do-it)))
 
-(defun psj-c-style-gl ()
-  (setq indent-tabs-mode 'only)
-  (defadvice align-regexp (around align-regexp-with-spaces activate)
-    (let ((indent-tabs-mode nil))
-      ad-do-it)))
+ (defun psj-c-style-gl ()
+   (setq indent-tabs-mode 'only)
+   (defadvice align-regexp (around align-regexp-with-spaces activate)
+     (let ((indent-tabs-mode nil))
+       ad-do-it)))
 
-(defun my-move-function-up ()
-  "Move current function up."
-  (interactive)
-  (save-excursion
-    (c-mark-function)
-    (let ((fun-beg (point))
-	  (fun-end (mark)))
-      (transpose-regions (progn
-			   (c-beginning-of-defun 1)
-			   (point))
-			 (progn
-			   (c-end-of-defun 1)
-			   (point))
-			 fun-beg fun-end))))
+ (defun my-move-function-up ()
+   "Move current function up."
+   (interactive)
+   (save-excursion
+     (c-mark-function)
+     (let ((fun-beg (point))
+	   (fun-end (mark)))
+       (transpose-regions (progn
+			    (c-beginning-of-defun 1)
+			    (point))
+			  (progn
+			    (c-end-of-defun 1)
+			    (point))
+			  fun-beg fun-end))))
 
 (defun my-move-function-down ()
-  "Move current function down."
-  (interactive)
-  (save-excursion
-    (c-mark-function)
-    (let ((fun-beg (point))
-	  (fun-end (mark)))
-      (transpose-regions fun-beg fun-end
-			 (progn
-			   (c-beginning-of-defun -1)
-			   (point))
-			 (progn
-			   (c-end-of-defun 1)
-			   (point))))))
+   "Move current function down."
+   (interactive)
+   (save-excursion
+     (c-mark-function)
+     (let ((fun-beg (point))
+	   (fun-end (mark)))
+       (transpose-regions fun-beg fun-end
+			  (progn
+			    (c-beginning-of-defun -1)
+			    (point))
+			  (progn
+			    (c-end-of-defun 1)
+			    (point))))))
 
 
 (add-hook 'c-mode-common-hook 'ry-c-style-hook-notabs)
@@ -381,9 +391,22 @@
 ;;Disable word wrapping
 (add-hook 'c-mode-common-hook 'toggle-truncate-lines nil)
 
-;;Adding directorise to search for related files
-(setq ff-search-directories
-    '("." "../src" "../include" "../../include" "../code" "../include/*" "../../include/*"))
+;;Red TODOS
+(setq fixme-modes '(c++-mode c-mode emacs-lisp-mode))
+(make-face 'font-lock-fixme-face)
+(make-face 'font-lock-note-face)
+(mapc (lambda (mode)
+	(font-lock-add-keywords
+	 mode
+	 '(("\\<\\(TODO\\)" 1 'font-lock-fixme-face t)
+	   ("\\<\\(NOTE\\)" 1 'font-lock-note-face t))))
+      fixme-modes)
+(modify-face 'font-lock-fixme-face "Red" nil nil t nil t nil nil)
+(modify-face 'font-lock-note-face "Dark Green" nil nil t nil t nil nil)
+
+ ;;Adding directorise to search for related files
+ (setq ff-search-directories
+     '("."  "../src/**" "../../src/**" "../code/**" "../include/**" "../../include/**"))
 
 (setq org-support-shift-select t)
 (require 'org-tempo)
@@ -478,11 +501,11 @@
   ;;;;;;;;;;;;;;;; macros and insertions
 (defun im-todo ()
   (interactive "*")
-  (insert "//TODO(im): ")
+  (insert "//TODO(Nacho): ")
   )
 (defun im-urgent ()
   (interactive "*")
-  (insert "//URGENT(im): ")
+  (insert "//URGENT(Nacho): ")
   )
 
 (defun ds-beginning-of-line (arg)
@@ -545,8 +568,13 @@
 (global-set-key (kbd "M-m") 'imenu)
 (global-set-key (kbd "C-q") 'im-swap-buffers-in-windows)
 (global-set-key (kbd "M-.") 'xref-find-definitions-other-window)
+;;Compile
+(global-set-key (kbd "<f5>") 'compile)
+(global-set-key (kbd "<f6>") 'compile-goto-error)
+
 ;;Replace
 (global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
+(global-set-key (kbd "C-c t") 'im-todo)
 
 (when (string-equal system-type "windows-nt")
-  (global-set-key (kbd "C-c k") 'grep))
+(global-set-key (kbd "C-c k") 'grep))

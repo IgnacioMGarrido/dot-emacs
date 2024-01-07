@@ -1,5 +1,6 @@
 *.*~
 *.last
+snippets/c++-mode/work_*
 autosaves
 .autosaves
 .cache/

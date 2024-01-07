@@ -10,33 +10,34 @@
 #+end_src
 ** Fonts
 #+BEGIN_SRC emacs-lisp
-   ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
-   ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-   ;; (set-face-attribute 'default nil :height 100)
-   (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
-   (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
-  ;; (set-face-attribute 'default nil
-  ;;                     :font "Source Code Pro"
-  ;;                     :height 100
-  ;;                     :weight 'Medium)
+     ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+     ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+     ;; (set-face-attribute 'default nil :height 100)
+     ;; (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
+  (set-face-attribute 'default nil :font "Liberation Mono" :height 115)
+  (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
+    ;; (set-face-attribute 'default nil
+    ;;                     :font "Source Code Pro"
+    ;;                     :height 100
+    ;;                     :weight 'Medium)
 
-  ;; (set-face-attribute 'variable-pitch nil
-  ;;                     :font "Source Code Pro"
-  ;;                     :height 100
-  ;;                     :weight 'Medium)
+    ;; (set-face-attribute 'variable-pitch nil
+    ;;                     :font "Source Code Pro"
+    ;;                     :height 100
+    ;;                     :weight 'Medium)
 
-  ;; (set-face-attribute 'fixed-pitch nil
-  ;;                     :font "Source Code Pro"
-  ;;                     :height 100
-  ;;                     :weight 'Medium)
+    ;; (set-face-attribute 'fixed-pitch nil
+    ;;                     :font "Source Code Pro"
+    ;;                     :height 100
+    ;;                     :weight 'Medium)
 
-  ;; (set-face-attribute 'font-lock-comment-face nil
-  ;;                     :slant 'italic)
-  
-  ;; (set-face-attribute 'font-lock-keyword-face nil
-  ;;                     :slant 'italic)
+    ;; (set-face-attribute 'font-lock-comment-face nil
+    ;;                     :slant 'italic)
 
-  ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
+    ;; (set-face-attribute 'font-lock-keyword-face nil
+    ;;                     :slant 'italic)
+
+    ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
  #+END_SRC
 
 ** Themes and Visuals
@@ -48,14 +49,14 @@
      ;; Global settings (defaults)
      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
 	   doom-themes-enable-italic t) ; if nil, italics is universally disabled
-     (load-theme 'doom-ir-black t)
+     (load-theme 'doom-gruvbox t)
 
      ;; Enable flashing mode-line on errors
      (doom-themes-visual-bell-config)
      ;; Enable custom neotree theme (all-the-icons must be installed!)
      (doom-themes-neotree-config)
      ;; or for treemacs users
-     (setq doom-themes-treemacs-theme "doom-ir-black") ; use "doom-colors" for less minimal icon theme
+     (setq doom-themes-treemacs-theme "doom-gruvbox") ; use "doom-colors" for less minimal icon theme
      (doom-themes-treemacs-config)
      ;; Corrects (and improves) org-mode's native fontification.
      (doom-themes-org-config))
@@ -70,8 +71,7 @@
   ;;   :hook (dired-mode . all-the-icons-dired-mode))
   #+end_src
 
-
-
+  
 * Basic Requires
 #+BEGIN_SRC emacs-lisp
  (require 'cc-mode)
@@ -199,6 +199,7 @@
   :ensure t
   :config
   (global-set-key (kbd "C-x p") 'projectile-command-map)
+  (global-set-key (kbd "C-x b") 'projectile-switch-to-buffer)
   (projectile-mode 1))
 #+END_SRC
 
@@ -262,16 +263,6 @@ use C-; to activate it.
 	  ))
 #+end_src
 
-** Yasnippet
-- Used for using snippets for for loops, main declarations etc
-#+begin_src emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :config
-    (setq yas-snippet-dir '(~/.emacs.d/plugins/yasnippet))
-    (yas-global-mode 1))
-#+end_src
-
 ** Company
 #+BEGIN_SRC emacs-lisp
   (use-package company
@@ -283,6 +274,16 @@ use C-; to activate it.
     (add-hook 'c-mode-hook 'company-mode))
 
 #+END_SRC
+
+** Yasnippet
+- Used for using snippets for for loops, main declarations etc
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :config
+    (setq yas-snippet-dir '(~/.emacs.d/plugins/yasnippet))
+    (yas-global-mode 1))
+#+end_src
 
 ** Better Matching funcs
 #+begin_src emacs-lisp
@@ -336,109 +337,109 @@ use C-; to activate it.
 #+end_src
 ** C++ Mode
 #+begin_src emacs-lisp
-  (defconst ry-c-style
-   '((c-electric-pound-behavior . nil)
-    (c-tab-always-indent       . t)
-    (c-hanging-braces-alist    . ((class-open)
-				     (class-close)
-				     (defun-open)
-				     (defun-close)
-				     (inline-open)
-				     (inline-close)
-				     (brace-list-open)
-				     (brace-list-close)
-				     (brace-list-intro)
-				     (brace-list-entry)
-				     (block-open)
-				     (block-close)
-				     (substatement-open)
-				     (state-case-open)
-				     (class-open)))
-     (c-hanging-colons-alist    . ((inher-intro)
-				  (case-label)
-				  (label)
-				  (access-label)
-				  (access-key)
-				  (member-init-intro)))
-     (c-cleanup-list            . (scope-operator
-				  list-close-comma
-				  defun-close-semi))
-     (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
-				  (label                 . -4)
-				  (access-label          . -4)
-				  (substatement-open     . 0)
-				  (statement-case-intro  . 0)
-				  (statement-case-open   . 4)
-				  (statement-block-intro . c-lineup-for)
-				  (block-open            . c-lineup-assignments)
-				  (statement-cont        . (c-lineup-assignments 4))
-				  (inexpr-class          . c-lineup-arglist-intro-after-paren)
-				  (case-label            . 4)
-				  (block-open            . 0)
-				  (inline-open           . 0)
-				  (innamespace           . 0)
-				  (topmost-intro-cont    . 0) ; recently changed
-				  (knr-argdecl-intro     . -4)
-				  (brace-entry-open      . c-lineup-assignments)
-				  (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
-				  (brace-list-open       . (c-lineup-assignments 0))
-				  (brace-list-open	 . 0)
-				  (brace-list-intro      . 4)
-				  (brace-list-entry      . 0)
-				  (brace-list-close      . 0)))
-	  (c-echo-syntactic-information-p . t))
-	  "ry-c-style")
+   (defconst ry-c-style
+    '((c-electric-pound-behavior . nil)
+     (c-tab-always-indent       . t)
+     (c-hanging-braces-alist    . ((class-open)
+				      (class-close)
+				      (defun-open)
+				      (defun-close)
+				      (inline-open)
+				      (inline-close)
+				      (brace-list-open)
+				      (brace-list-close)
+				      (brace-list-intro)
+				      (brace-list-entry)
+				      (block-open)
+				      (block-close)
+				      (substatement-open)
+				      (state-case-open)
+				      (class-open)))
+      (c-hanging-colons-alist    . ((inher-intro)
+				   (case-label)
+				   (label)
+				   (access-label)
+				   (access-key)
+				   (member-init-intro)))
+      (c-cleanup-list            . (scope-operator
+				   list-close-comma
+				   defun-close-semi))
+      (c-offsets-alist           . ((arglist-close         . c-lineup-arglist)
+				   (label                 . -4)
+				   (access-label          . -4)
+				   (substatement-open     . 0)
+				   (statement-case-intro  . 0)
+				   (statement-case-open   . 4)
+				   (statement-block-intro . c-lineup-for)
+				   (block-open            . c-lineup-assignments)
+				   (statement-cont        . (c-lineup-assignments 4))
+				   (inexpr-class          . c-lineup-arglist-intro-after-paren)
+				   (case-label            . 4)
+				   (block-open            . 0)
+				   (inline-open           . 0)
+				   (innamespace           . 0)
+				   (topmost-intro-cont    . 0) ; recently changed
+				   (knr-argdecl-intro     . -4)
+				   (brace-entry-open      . c-lineup-assignments)
+				   (brace-list-open       . (c-lineup-arglist-intro-after-paren c-lineup-assignments))
+				   (brace-list-open       . (c-lineup-assignments 0))
+				   (brace-list-open	 . 0)
+				   (brace-list-intro      . 4)
+				   (brace-list-entry      . 0)
+				   (brace-list-close      . 0)))
+	   (c-echo-syntactic-information-p . t))
+	   "ry-c-style")
 
-  (defun ry-c-style-hook-notabs ()
-    (c-add-style "ryc" ry-c-style t)
-    (setq tab-width 4)
-    (c-set-offset 'innamespace 0)
-    (c-toggle-auto-hungry-state 1)
-    (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
-    (setq electric-pair-inhibit-predicate
-	  (lambda (c)
-	    (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
-    ;;(sp-pair "'" nil :actions :rem)
-    ;;(setq sp-highlight-pair-overlay nil)
-    (defadvice align-regexp (around align-regexp-with-spaces activate)
-      (let ((indent-tabs-mode nil))
-	ad-do-it)))
+   (defun ry-c-style-hook-notabs ()
+     (c-add-style "ryc" ry-c-style t)
+     (setq tab-width 4)
+     (c-set-offset 'innamespace 0)
+     (c-toggle-auto-hungry-state 1)
+     (setq c-hanging-semi&comma-criteria '((lambda () 'stop)))
+     (setq electric-pair-inhibit-predicate
+	   (lambda (c)
+	     (if (char-equal c ?\') t (electric-pair-default-inhibit c))))
+     ;;(sp-pair "'" nil :actions :rem)
+     ;;(setq sp-highlight-pair-overlay nil)
+     (defadvice align-regexp (around align-regexp-with-spaces activate)
+       (let ((indent-tabs-mode nil))
+	 ad-do-it)))
 
-  (defun psj-c-style-gl ()
-    (setq indent-tabs-mode 'only)
-    (defadvice align-regexp (around align-regexp-with-spaces activate)
-      (let ((indent-tabs-mode nil))
-	ad-do-it)))
+   (defun psj-c-style-gl ()
+     (setq indent-tabs-mode 'only)
+     (defadvice align-regexp (around align-regexp-with-spaces activate)
+       (let ((indent-tabs-mode nil))
+	 ad-do-it)))
 
-  (defun my-move-function-up ()
-    "Move current function up."
-    (interactive)
-    (save-excursion
-      (c-mark-function)
-      (let ((fun-beg (point))
-	    (fun-end (mark)))
-	(transpose-regions (progn
-			     (c-beginning-of-defun 1)
-			     (point))
-			   (progn
-			     (c-end-of-defun 1)
-			     (point))
-			   fun-beg fun-end))))
+   (defun my-move-function-up ()
+     "Move current function up."
+     (interactive)
+     (save-excursion
+       (c-mark-function)
+       (let ((fun-beg (point))
+	     (fun-end (mark)))
+	 (transpose-regions (progn
+			      (c-beginning-of-defun 1)
+			      (point))
+			    (progn
+			      (c-end-of-defun 1)
+			      (point))
+			    fun-beg fun-end))))
 
   (defun my-move-function-down ()
-    "Move current function down."
-    (interactive)
-    (save-excursion
-      (c-mark-function)
-      (let ((fun-beg (point))
-	    (fun-end (mark)))
-	(transpose-regions fun-beg fun-end
-			   (progn
-			     (c-beginning-of-defun -1)
-			     (point))
-			   (progn
-			     (c-end-of-defun 1)
-			     (point))))))
+     "Move current function down."
+     (interactive)
+     (save-excursion
+       (c-mark-function)
+       (let ((fun-beg (point))
+	     (fun-end (mark)))
+	 (transpose-regions fun-beg fun-end
+			    (progn
+			      (c-beginning-of-defun -1)
+			      (point))
+			    (progn
+			      (c-end-of-defun 1)
+			      (point))))))
 
 
   (add-hook 'c-mode-common-hook 'ry-c-style-hook-notabs)
@@ -449,10 +450,70 @@ use C-; to activate it.
   ;;Disable word wrapping
   (add-hook 'c-mode-common-hook 'toggle-truncate-lines nil)
 
-  ;;Adding directorise to search for related files
-  (setq ff-search-directories
-      '("." "../src" "../include" "../../include" "../code" "../include/*" "../../include/*"))
+  ;;Red TODOS
+  (setq fixme-modes '(c++-mode c-mode emacs-lisp-mode))
+  (make-face 'font-lock-fixme-face)
+  (make-face 'font-lock-note-face)
+  (mapc (lambda (mode)
+	  (font-lock-add-keywords
+	   mode
+	   '(("\\<\\(TODO\\)" 1 'font-lock-fixme-face t)
+	     ("\\<\\(NOTE\\)" 1 'font-lock-note-face t))))
+	fixme-modes)
+  (modify-face 'font-lock-fixme-face "Red" nil nil t nil t nil nil)
+  (modify-face 'font-lock-note-face "Dark Green" nil nil t nil t nil nil)
+
+   ;;Adding directorise to search for related files
+   (setq ff-search-directories
+       '("."  "../src/**" "../../src/**" "../code/**" "../include/**" "../../include/**"))
 #+end_src
+** Compilation
+#+BEGIN_SRC emacs-lisp
+  (setq compilation-directory-locked nil)
+
+  (when (string-equal system-type "windows-nt")
+    (setq nacho-makescript "build.bat")
+    (setq nacho-font "outline-Liberation Mono"))
+
+  (defun lock-compilation-directory ()
+    "The compilation process should NOT hunt for a makefile"
+    (interactive)
+    (setq compilation-directory-locked t)
+    (message "Compilation directory is locked."))
+
+  (defun unlock-compilation-directory ()
+    "The compilation process SHOULD hunt for a makefile"
+    (interactive)
+    (setq compilation-directory-locked nil)
+    (message "Compilation directory is roaming."))
+
+
+  (defun find-project-directory ()
+    "Find the project directory."
+    (interactive)
+    (setq find-project-from-directory default-directory)
+
+    (switch-to-buffer-other-window "*compilation*")
+    (if compilation-directory-locked (cd last-compilation-directory)
+      (cd find-project-from-directory)
+      (find-project-directory-recursive)
+      (setq last-compilation-directory default-directory)))
+
+  (defun find-project-directory-recursive ()
+    "Recursively search for a makefile."
+    (interactive)
+    (if (file-exists-p nacho-makescript) t
+      (cd "../")
+      (find-project-directory-recursive)))
+
+  (defun make-without-asking ()
+    "Make the current build."
+    (interactive)
+    (if (find-project-directory) (compile nacho-makescript))
+    (other-window 1))
+  (global-set-key (kbd "<f5>") 'make-without-asking)
+#+END_SRC
+
 * Org Mode
 #+begin_src emacs-lisp
   (setq org-support-shift-select t)
@@ -551,11 +612,11 @@ use C-; to activate it.
     ;;;;;;;;;;;;;;;; macros and insertions
   (defun im-todo ()
     (interactive "*")
-    (insert "//TODO(im): ")
+    (insert "//TODO(Nacho): ")
     )
   (defun im-urgent ()
     (interactive "*")
-    (insert "//URGENT(im): ")
+    (insert "//URGENT(Nacho): ")
     )
 
   (defun ds-beginning-of-line (arg)
@@ -572,7 +633,7 @@ use C-; to activate it.
     #+END_SRC
 
 * Key Bindings
-Unbind keybindings
+** Unbind keybindings
 #+BEGIN_SRC emacs-lisp
   (defun pt/unbind-bad-keybindings ()
     "Remove unhelpful keybindings."
@@ -599,7 +660,7 @@ Unbind keybindings
     :ensure t)
 #+END_SRC
 
-Bind new Keybindings
+** Bind new Keybindings
 #+begin_src emacs-lisp
   ;;window management
   (global-set-key (kbd "M-<right>") 'windmove-right)
@@ -626,10 +687,15 @@ Bind new Keybindings
   (global-set-key (kbd "M-m") 'imenu)
   (global-set-key (kbd "C-q") 'im-swap-buffers-in-windows)
   (global-set-key (kbd "M-.") 'xref-find-definitions-other-window)
+  ;;Compile
+
+  (global-set-key (kbd "<f6>") 'compile-goto-error)
+
   ;;Replace
   (global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
+  (global-set-key (kbd "C-c t") 'im-todo)
 
   (when (string-equal system-type "windows-nt")
-    (global-set-key (kbd "C-c k") 'grep))
+  (global-set-key (kbd "C-c k") 'grep))
 #+end_src
 
