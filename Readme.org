@@ -10,34 +10,8 @@
 #+end_src
 ** Fonts
 #+BEGIN_SRC emacs-lisp
-     ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
-     ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-     ;; (set-face-attribute 'default nil :height 100)
-     ;; (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
   (set-face-attribute 'default nil :font "Liberation Mono" :height 115)
   (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
-    ;; (set-face-attribute 'default nil
-    ;;                     :font "Source Code Pro"
-    ;;                     :height 100
-    ;;                     :weight 'Medium)
-
-    ;; (set-face-attribute 'variable-pitch nil
-    ;;                     :font "Source Code Pro"
-    ;;                     :height 100
-    ;;                     :weight 'Medium)
-
-    ;; (set-face-attribute 'fixed-pitch nil
-    ;;                     :font "Source Code Pro"
-    ;;                     :height 100
-    ;;                     :weight 'Medium)
-
-    ;; (set-face-attribute 'font-lock-comment-face nil
-    ;;                     :slant 'italic)
-
-    ;; (set-face-attribute 'font-lock-keyword-face nil
-    ;;                     :slant 'italic)
-
-    ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
  #+END_SRC
 
 ** Themes and Visuals
@@ -74,8 +48,9 @@
   
 * Basic Requires
 #+BEGIN_SRC emacs-lisp
- (require 'cc-mode)
-#+END_SRC
+  (require 'cc-mode)
+  (require 'server)
+ #+END_SRC
 
 * Interface tweaks
 #+begin_src emacs-lisp
@@ -84,7 +59,6 @@
     (package-refresh-contents)
     (package-install 'use-package))
 
-  (require 'server)
   (unless (server-running-p) (server-start))
   (setq server-use-tcp t)
   (defun server-ensure-safe-dir (dir) "Noop" t)

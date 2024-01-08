@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: pragma optimize off
+# key: prof
+# --
+#pragma optimize("", off)
