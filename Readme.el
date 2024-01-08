@@ -77,10 +77,6 @@
 (setq gc-cons-threshold 100000000)
 (setq max-specpdl-size 5000)
 
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-
 (set-charset-priority 'unicode)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -93,7 +89,8 @@
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (tooltip-mode -1)
-  (pixel-scroll-mode))
+  (pixel-scroll-mode)
+  (menu-bar-mode -1))
 
 (when (eq system-type 'darwin)
   (setq ns-auto-hide-menu-bar t))
@@ -261,6 +258,9 @@
   (setq dumb-jump-force-searcher nil)
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
+(use-package magit
+  :ensure t)
+
 (add-hook 'prog-mode-hook
 	  (lambda () (interactive)
 	    (setq show-trailing-whitespace 1)))
@@ -407,6 +407,50 @@
  ;;Adding directorise to search for related files
  (setq ff-search-directories
      '("."  "../src/**" "../../src/**" "../code/**" "../include/**" "../../include/**"))
+
+(setq compilation-directory-locked nil)
+
+(when (string-equal system-type "windows-nt")
+  (setq nacho-makescript "build.bat")
+  (setq nacho-font "outline-Liberation Mono"))
+
+(defun lock-compilation-directory ()
+  "The compilation process should NOT hunt for a makefile"
+  (interactive)
+  (setq compilation-directory-locked t)
+  (message "Compilation directory is locked."))
+
+(defun unlock-compilation-directory ()
+  "The compilation process SHOULD hunt for a makefile"
+  (interactive)
+  (setq compilation-directory-locked nil)
+  (message "Compilation directory is roaming."))
+
+
+(defun find-project-directory ()
+  "Find the project directory."
+  (interactive)
+  (setq find-project-from-directory default-directory)
+
+  (switch-to-buffer-other-window "*compilation*")
+  (if compilation-directory-locked (cd last-compilation-directory)
+    (cd find-project-from-directory)
+    (find-project-directory-recursive)
+    (setq last-compilation-directory default-directory)))
+
+(defun find-project-directory-recursive ()
+  "Recursively search for a makefile."
+  (interactive)
+  (if (file-exists-p nacho-makescript) t
+    (cd "../")
+    (find-project-directory-recursive)))
+
+(defun make-without-asking ()
+  "Make the current build."
+  (interactive)
+  (if (find-project-directory) (compile nacho-makescript))
+  (other-window 1))
+(global-set-key (kbd "<f5>") 'make-without-asking)
 
 (setq org-support-shift-select t)
 (require 'org-tempo)
@@ -569,7 +613,7 @@
 (global-set-key (kbd "C-q") 'im-swap-buffers-in-windows)
 (global-set-key (kbd "M-.") 'xref-find-definitions-other-window)
 ;;Compile
-(global-set-key (kbd "<f5>") 'compile)
+
 (global-set-key (kbd "<f6>") 'compile-goto-error)
 
 ;;Replace
