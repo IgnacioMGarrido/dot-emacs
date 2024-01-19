@@ -5,34 +5,8 @@
 
 (setq custom-file (make-temp-name "/tmp/"))
 
-;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
-   ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-   ;; (set-face-attribute 'default nil :height 100)
-   ;; (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
 (set-face-attribute 'default nil :font "Liberation Mono" :height 115)
 (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
-  ;; (set-face-attribute 'default nil
-  ;;                     :font "Source Code Pro"
-  ;;                     :height 100
-  ;;                     :weight 'Medium)
-
-  ;; (set-face-attribute 'variable-pitch nil
-  ;;                     :font "Source Code Pro"
-  ;;                     :height 100
-  ;;                     :weight 'Medium)
-
-  ;; (set-face-attribute 'fixed-pitch nil
-  ;;                     :font "Source Code Pro"
-  ;;                     :height 100
-  ;;                     :weight 'Medium)
-
-  ;; (set-face-attribute 'font-lock-comment-face nil
-  ;;                     :slant 'italic)
-
-  ;; (set-face-attribute 'font-lock-keyword-face nil
-  ;;                     :slant 'italic)
-
-  ;; (add-to-list 'default-frame-alist '(font . "Source Code Pro"))
 
 ;;(load-theme 'tango-dark t)
    (use-package doom-themes
@@ -63,13 +37,13 @@
 ;;   :hook (dired-mode . all-the-icons-dired-mode))
 
 (require 'cc-mode)
+(require 'server)
 
 ;; -*- coding: utf-8; lexical-binding: t -*-
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
-(require 'server)
 (unless (server-running-p) (server-start))
 (setq server-use-tcp t)
 (defun server-ensure-safe-dir (dir) "Noop" t)
@@ -620,3 +594,7 @@
 
 (when (string-equal system-type "windows-nt")
 (global-set-key (kbd "C-c k") 'grep))
+
+;; magit
+
+(global-set-key (kbd "<f7>") 'magit-log-buffer-file)
