@@ -5,7 +5,7 @@
 
 (setq custom-file (make-temp-name "/tmp/"))
 
-(set-face-attribute 'default nil :font "Liberation Mono" :height 115)
+(set-face-attribute 'default nil :font "Liberation Mono" :height 110)
 (set-face-attribute 'variable-pitch nil :font "SF Mono-12")
 
 ;;(load-theme 'tango-dark t)
@@ -32,6 +32,9 @@
   (use-package all-the-icons :ensure t)
   (unless installed (all-the-icons-install-fonts)))
 
+;; Green Hollow cursor
+(setq-default cursor-type 'hollow)
+(set-cursor-color "#39f909")
 ;; (use-package all-the-icons-dired
 ;;   :after all-the-icons
 ;;   :hook (dired-mode . all-the-icons-dired-mode))
@@ -65,6 +68,8 @@
   (tooltip-mode -1)
   (pixel-scroll-mode)
   (menu-bar-mode -1))
+
+(delete-selection-mode 1)
 
 (when (eq system-type 'darwin)
   (setq ns-auto-hide-menu-bar t))
@@ -232,6 +237,16 @@
 
 (use-package magit
   :ensure t)
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+	 ("C->" . mc/mark-next-like-this)
+	 ("C-<" . mc/mark-previous-like-this)))
+
+(use-package avy
+  :ensure t
+  :bind("M-s" . avy-goto-char))
 
 (add-hook 'prog-mode-hook
 	  (lambda () (interactive)
@@ -592,9 +607,34 @@
 (global-set-key (kbd "M-[") #'im-surround-by-curly-brackets)
 (global-set-key (kbd "C-c t") 'im-todo)
 
+(global-set-key (kbd "C-/") 'comment-or-uncomment-region)
+
 (when (string-equal system-type "windows-nt")
-(global-set-key (kbd "C-c k") 'grep))
+    (global-set-key (kbd "C-c k") 'grep))
 
 ;; magit
-
 (global-set-key (kbd "<f7>") 'magit-log-buffer-file)
+
+;;Comment region
+(global-set-key (kbd "C-/") 'comment-or-uncomment-region)  
+;;Muiltiple-cursors
+
+;; (global-set-key (kbd "C-M-j") 'mc/mark-all-dwim)
+;; (global-set-key (kbd "<f11>") 'mc/edit-lines)
+;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+;; (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;; See file in visual studio
+(defun im/vs-view ()
+    (interactive)
+    (call-process-shell-command (concat "devenv.exe /edit " (buffer-file-name)) nil 0))
+
+(add-hook 'c-mode-common-hook
+	  (lambda () (global-set-key (kbd "C-c v") 'im/vs-view)))
+
+;; (defun im/start-sln ()
+;;     "Start solution"
+;;     (interactive)
+;;     (if (find-project-directory) (call-process-shell-command (concat "devenv.exe 2DGame.sln") nil 
+							     ;; 0)))

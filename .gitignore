@@ -19,3 +19,4 @@ recentf
 server/
 eshell/
 transient/
+.mc-lists.el
